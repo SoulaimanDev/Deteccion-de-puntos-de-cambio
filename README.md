@@ -84,10 +84,9 @@ $$
 
 Considero que una detección es válida cuando existe coincidencia dentro de un margen $M$ muestral:
 
-$$
-\text{Tp} = \left\{ t^* \in \mathcal{T}^* \mid \exists\, \hat{t} \in \widehat{\mathcal{T}} \text{ tel que } |\hat{t} - t^*| < M \right\}
-$$
-
+```math
+\text{Tp} = \{ t^* \in \mathcal{T}^* \mid \exists\, \hat{t} \in \widehat{\mathcal{T}} \text{ tel que } |\hat{t} - t^*| < M \}
+```
 
 
 
