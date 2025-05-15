@@ -82,8 +82,8 @@ $$
 \text{Rec} = \frac{\text{Detecciones correctas}}{\text{Total de puntos reales}} = \frac{|\text{Tp}|}{K^*}
 $$
 
- Considero que una detección es válida cuando existe coincidencia dentro de un margen $M$ muestral:
- 
+Considero que una detección es válida cuando existe coincidencia dentro de un margen $M$ muestral:
+
 $$
 \text{Tp} = \big\{ t^* \in \mathcal{T}^* \mid \exists\, \hat{t} \in \widehat{\mathcal{T}} \,:\, |\hat{t} - t^*| < M \big\}
 $$
