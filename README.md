@@ -63,17 +63,7 @@ El método PELT (Pruned Exact Linear Time) es una técnica bastante eficiente pa
 
 Los métodos para detectar puntos de cambio se pueden evaluar de dos formas: una es demostrando ciertas propiedades matemáticas de los algoritmos y la otra es hacerlo de forma empírica, calculando distintas métricas.
 
-En lo que sigue, al conjunto de los puntos de cambio verdaderos lo denoto como 
-
-$$
-\mathcal{T}^* = \{ t_1^*, \ldots, t_K^* \}
-$$ 
-
-y al conjunto de los puntos de cambio estimados lo denoto como 
-
-$$
-\widehat{\mathcal{T}} = \{\hat{t}_1, \ldots, \hat{t}_{\hat{K}} \}
-$$
+En lo que sigue, al conjunto de los puntos de cambio verdaderos lo denoto como \( \mathcal{T}^* = \{ t_1^*, \ldots, t_K^* \} \), y al conjunto de los puntos de cambio estimados lo denoto como \(\widehat{\mathcal{T}} = \{\hat{t}_1, \ldots, \hat{t}_{\hat{K}} \}\).
 
 #### F1-Score
 
@@ -91,7 +81,7 @@ $$
 \text{Rec} = \frac{\text{Detecciones correctas}}{\text{Total de puntos reales}} = \frac{|\text{Tp}|}{K^*}
 $$
 
-Considero que una detección es válida cuando existe coincidencia dentro de un margen $M$ muestral:
+Considero que una detección es válida cuando existe coincidencia dentro de un margen \(M\) muestral:
 
 $$
 \text{Tp} = \big\{ t^* \in \mathcal{T}^* \mid \exists\, \hat{t} \in \widehat{\mathcal{T}} \,:\, |\hat{t} - t^*| < M \big\}
@@ -125,41 +115,11 @@ donde:
 - El primer término evalúa la máxima distancia de cualquier punto detectado al punto real más cercano
 - El segundo término mide la máxima distancia de cualquier punto real al punto detectado más cercano
 
-Este valor representa el peor error cometido por el algoritmo que genera el conjunto de puntos estimados 
-
-$$
-\widehat{\mathcal{T}}
-$$
-
-y se expresa en número de muestras. Cuando su valor es cero, significa que ambos conjuntos de puntos de cambio coinciden exactamente. Por el contrario, cuanto mayor sea su valor, mayor será la distancia existente entre algún punto de cambio verdadero en 
-
-$$
-\mathcal{T}^{*}
-$$
-
-y el punto estimado más cercano en 
-
-$$
-\widehat{\mathcal{T}}
-$$
-
-o viceversa.
+Este valor representa el peor error cometido por el algoritmo que genera el conjunto de puntos estimados \(\widehat{\mathcal{T}}\), y se expresa en número de muestras. Cuando su valor es cero, significa que ambos conjuntos de puntos de cambio coinciden exactamente. Por el contrario, cuanto mayor sea su valor, mayor será la distancia existente entre algún punto de cambio verdadero en \(\mathcal{T}^{*}\) y el punto estimado más cercano en \(\widehat{\mathcal{T}}\), o viceversa.
 
 #### Índice de Rand
 
-La métrica fundamental Índice de Rand cuantifica la precisión en la detección de puntos de cambio. Esta medida estadística compara la similitud entre la segmentación obtenida 
-
-$$
-\widehat{\mathcal{T}}
-$$
-
-y la segmentación de referencia 
-
-$$
-\mathcal{T}^{*}
-$$
-
-proporcionando una evaluación global del rendimiento del algoritmo.
+La métrica fundamental Índice de Rand cuantifica la precisión en la detección de puntos de cambio. Esta medida estadística compara la similitud entre la segmentación obtenida \(\widehat{\mathcal{T}}\) y la segmentación de referencia \(\mathcal{T}^{*}\), proporcionando una evaluación global del rendimiento del algoritmo.
 
 El Índice de Rand calcula la proporción de pares de muestras que son:
 
@@ -169,11 +129,7 @@ El Índice de Rand calcula la proporción de pares de muestras que son:
 - **Discordantes**:
   - Asignados al mismo segmento en una segmentación y a diferentes en la otra
 
-Para formalizar esta idea, se definen las siguientes relaciones para un conjunto de puntos de cambio 
-
-$$
-\mathcal{T}
-$$
+Para formalizar esta idea, se definen las siguientes relaciones para un conjunto de puntos de cambio \(\mathcal{T}\):
 
 $$
 \text{SameSeg}(\mathcal{T}) := \{(s,t) \mid 1 \leq s < t \leq T \text{ tales que } s \text{ y } t \text{ se encuentran en el mismo segmento según } \mathcal{T}\}
@@ -190,7 +146,6 @@ $$
 $$
 
 Este valor se encuentra normalizado en el intervalo entre 0 (cuando no existe ningún acuerdo entre las segmentaciones) y 1 (cuando las segmentaciones son idénticas).
-
 
 ---
 
