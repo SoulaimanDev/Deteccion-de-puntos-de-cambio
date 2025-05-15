@@ -76,7 +76,8 @@ $$
 \text{Prec} = \frac{\text{Detecciones correctas}}{\text{Total de detecciones}} = \frac{|\text{Tp}|}{\hat{K}}
 $$
 
-\textbf{Exhaustividad (Rec)}: Evalúa la capacidad de descubrimiento
+**Exhaustividad (Rec)**: Evalúa la capacidad de descubrimiento
+
 $$
 \text{Rec} = \frac{\text{Detecciones correctas}}{\text{Total de puntos reales}} = \frac{|\text{Tp}|}{K^*}
 $$
