@@ -91,6 +91,7 @@ $$
 
 
 
+
 **F1-score** se define como la media armónica entre la precisión y el recall:
 
 $$
