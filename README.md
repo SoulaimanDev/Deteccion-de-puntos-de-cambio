@@ -61,34 +61,47 @@ El método PELT (Pruned Exact Linear Time) es una técnica bastante eficiente pa
 
 ### Evaluación
 
-
 Los métodos para detectar puntos de cambio se pueden evaluar de dos formas: una es demostrando ciertas propiedades matemáticas de los algoritmos y la otra es hacerlo de forma empírica, calculando distintas métricas.
 
-En lo que sigue, al conjunto de los puntos de cambio verdaderos lo denoto como \( \mathcal{T}^* = \{ t_1^*, \ldots, t_K^* \} \), y al conjunto de los puntos de cambio estimados lo denoto como \(\widehat{\mathcal{T}} = \{\hat{t}_1, \ldots, \hat{t}_{\hat{K}} \}\).
+En lo que sigue, al conjunto de los puntos de cambio verdaderos lo denoto como 
+
+$$
+\mathcal{T}^* = \{ t_1^*, \ldots, t_K^* \}
+$$ 
+
+y al conjunto de los puntos de cambio estimados lo denoto como 
+
+$$
+\widehat{\mathcal{T}} = \{\hat{t}_1, \ldots, \hat{t}_{\hat{K}} \}
+$$
+
 #### F1-Score
 
 La métrica F1-Score emerge como indicador robusto para evaluar el rendimiento en esta tarea. Su cálculo se basa en dos componentes esenciales:
 
- \textbf{Precisión (Prec)}: Mide la fiabilidad de las detecciones
-\[
+**Precisión (Prec)**: Mide la fiabilidad de las detecciones
+
+$$
 \text{Prec} = \frac{\text{Detecciones correctas}}{\text{Total de detecciones}} = \frac{|\text{Tp}|}{\hat{K}}
-\]
+$$
 
-\textbf{Exhaustividad (Rec)}: Evalúa la capacidad de descubrimiento
-\[
+**Exhaustividad (Rec)**: Evalúa la capacidad de descubrimiento
+
+$$
 \text{Rec} = \frac{\text{Detecciones correctas}}{\text{Total de puntos reales}} = \frac{|\text{Tp}|}{K^*}
-\]
+$$
 
- Considero que una detección es válida cuando existe coincidencia dentro de un margen $M$ muestral:
-\[
+Considero que una detección es válida cuando existe coincidencia dentro de un margen $M$ muestral:
+
+$$
 \text{Tp} = \big\{ t^* \in \mathcal{T}^* \mid \exists\, \hat{t} \in \widehat{\mathcal{T}} \,:\, |\hat{t} - t^*| < M \big\}
-\]
+$$
 
-\textbf{F1-score} se define como la media armónica entre la precisión y el recall:
+**F1-score** se define como la media armónica entre la precisión y el recall:
 
-\[
+$$
 \text{F1} = 2 \cdot \frac{\text{Prec} \cdot \text{Rec}}{\text{Prec} + \text{Rec}} \in [0,1]
-\]
+$$
 
 El mejor valor posible para esta métrica es 1, indicando una detección perfecta, mientras que su peor valor es 0.
 
@@ -96,7 +109,7 @@ El mejor valor posible para esta métrica es 1, indicando una detección perfect
 
 Desde un punto de vista formal, esta métrica corresponde a la mayor distancia temporal entre un punto de cambio y su correspondiente estimación:
 
-\[
+$$
 \text{Hausdorff}(\mathcal{T}^*,\widehat{\mathcal{T}}) = \max \left\{
 \underbrace{
 \max_{\hat{t}\in\widehat{\mathcal{T}}} \min_{t^*\in\mathcal{T}^*} |\hat{t}-t^*|
@@ -105,48 +118,79 @@ Desde un punto de vista formal, esta métrica corresponde a la mayor distancia t
 \max_{t^*\in\mathcal{T}^*} \min_{\hat{t}\in\widehat{\mathcal{T}}} |\hat{t}-t^*|
 }_{\text{Error máximo de omisión}}
 \right\}
-\]
+$$
 
 donde:
-\begin{itemize}
-    \item El primer término evalúa la máxima distancia de cualquier punto detectado al punto real más cercano
-    \item El segundo término mide la máxima distancia de cualquier punto real al punto detectado más cercano
-\end{itemize}
-Este valor representa el peor error cometido por el algoritmo que genera el conjunto de puntos estimados \(\widehat{\mathcal{T}}\), y se expresa en número de muestras. Cuando su valor es cero, significa que ambos conjuntos de puntos de cambio coinciden exactamente. Por el contrario, cuanto mayor sea su valor, mayor será la distancia existente entre algún punto de cambio verdadero en \(\mathcal{T}^{*}\) y el punto estimado más cercano en \(\widehat{\mathcal{T}}\), o viceversa.
 
-####  Índice de Rand
+- El primer término evalúa la máxima distancia de cualquier punto detectado al punto real más cercano
+- El segundo término mide la máxima distancia de cualquier punto real al punto detectado más cercano
 
-La métrica fundamental Índice de Rand  cuantifica la precisión en la detección de puntos de cambio. Esta medida estadística compara la similitud entre la segmentación obtenida $\widehat{\mathcal{T}}$ y la segmentación de referencia $\mathcal{T}^{*}$, proporcionando una evaluación global del rendimiento del algoritmo.
+Este valor representa el peor error cometido por el algoritmo que genera el conjunto de puntos estimados 
+
+$$
+\widehat{\mathcal{T}}
+$$
+
+y se expresa en número de muestras. Cuando su valor es cero, significa que ambos conjuntos de puntos de cambio coinciden exactamente. Por el contrario, cuanto mayor sea su valor, mayor será la distancia existente entre algún punto de cambio verdadero en 
+
+$$
+\mathcal{T}^{*}
+$$
+
+y el punto estimado más cercano en 
+
+$$
+\widehat{\mathcal{T}}
+$$
+
+o viceversa.
+
+#### Índice de Rand
+
+La métrica fundamental Índice de Rand cuantifica la precisión en la detección de puntos de cambio. Esta medida estadística compara la similitud entre la segmentación obtenida 
+
+$$
+\widehat{\mathcal{T}}
+$$
+
+y la segmentación de referencia 
+
+$$
+\mathcal{T}^{*}
+$$
+
+proporcionando una evaluación global del rendimiento del algoritmo.
 
 El Índice de Rand calcula la proporción de pares de muestras que son:
-\begin{itemize}
-    \item \textbf{Concordantes}: 
-    \begin{itemize}
-        \item Pertenecen al mismo segmento en ambas segmentaciones
-        \item Pertenecen a segmentos diferentes en ambas segmentaciones
-    \end{itemize}
-    \item \textbf{Discordantes}:
-    \begin{itemize}
-        \item Asignados al mismo segmento en una segmentación y a diferentes en la otra
-    \end{itemize}
-\end{itemize}
 
+- **Concordantes**:
+  - Pertenecen al mismo segmento en ambas segmentaciones
+  - Pertenecen a segmentos diferentes en ambas segmentaciones
+- **Discordantes**:
+  - Asignados al mismo segmento en una segmentación y a diferentes en la otra
 
+Para formalizar esta idea, se definen las siguientes relaciones para un conjunto de puntos de cambio 
 
-Para formalizar esta idea, se definen las siguientes relaciones para un conjunto de puntos de cambio \(\mathcal{T}\):
+$$
+\mathcal{T}
+$$
 
-\begin{align*}
-\text{SameSeg}(\mathcal{T}) &:= \{(s,t) \mid 1 \leq s < t \leq T \text{ tales que } s \text{ y } t \text{ se encuentran en el mismo segmento según } \mathcal{T}\} \\
-\text{DiffSeg}(\mathcal{T}) &:= \{(s,t) \mid 1 \leq s < t \leq T \text{ tales que } s \text{ y } t \text{ pertenecen a segmentos distintos según } \mathcal{T}\}
-\end{align*}
+$$
+\text{SameSeg}(\mathcal{T}) := \{(s,t) \mid 1 \leq s < t \leq T \text{ tales que } s \text{ y } t \text{ se encuentran en el mismo segmento según } \mathcal{T}\}
+$$
+
+$$
+\text{DiffSeg}(\mathcal{T}) := \{(s,t) \mid 1 \leq s < t \leq T \text{ tales que } s \text{ y } t \text{ pertenecen a segmentos distintos según } \mathcal{T}\}
+$$
 
 A partir de estas definiciones, el Índice de Rand se expresa como:
 
-\[
+$$
 \textsc{RI}(\mathcal{T}^{*},\widehat{\mathcal{T}}) := \frac{|\text{SameSeg}(\widehat{\mathcal{T}}) \cap \text{SameSeg}(\mathcal{T}^{*})| + |\text{DiffSeg}(\widehat{\mathcal{T}}) \cap \text{DiffSeg}(\mathcal{T}^{*})|}{T(T-1)/2}
-\]
+$$
 
-Este valor se encuentra normalizado en el intervalo entre 0 (cuando no existe ningún acuerdo entre las segmentaciones) y 1 (cuando las segmentaciones son idénticas). 
+Este valor se encuentra normalizado en el intervalo entre 0 (cuando no existe ningún acuerdo entre las segmentaciones) y 1 (cuando las segmentaciones son idénticas).
+
 
 ---
 
