@@ -85,8 +85,9 @@ $$
 Considero que una detección es válida cuando existe coincidencia dentro de un margen $M$ muestral:
 
 $$
-\text{Tp} = \big\{ t^* \in \mathcal{T}^* \mid \exists\, \hat{t} \in \widehat{\mathcal{T}} \,:\, |\hat{t} - t^*| < M \big\}
+\text{Tp} = \left\{ t^* \in \mathcal{T}^* \mid \exists\, \hat{t} \in \widehat{\mathcal{T}} \text{ tel que } |\hat{t} - t^*| < M \right\}
 $$
+
 
 **F1-score** se define como la media armónica entre la precisión y el recall:
 
