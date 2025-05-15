@@ -70,10 +70,11 @@ En lo que sigue, al conjunto de los puntos de cambio verdaderos lo denoto como T
 
 La métrica F1-Score emerge como indicador robusto para evaluar el rendimiento en esta tarea. Su cálculo se basa en dos componentes esenciales:
 
- \textbf{Precisión (Prec)}: Mide la fiabilidad de las detecciones
-\[
+**Precisión (Prec)**: Mide la fiabilidad de las detecciones  
+
+$$
 \text{Prec} = \frac{\text{Detecciones correctas}}{\text{Total de detecciones}} = \frac{|\text{Tp}|}{\hat{K}}
-\]
+$$
 
 \textbf{Exhaustividad (Rec)}: Evalúa la capacidad de descubrimiento
 \[
