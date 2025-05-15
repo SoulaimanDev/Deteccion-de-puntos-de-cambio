@@ -141,12 +141,13 @@ El Índice de Rand calcula la proporción de pares de muestras que son:
 
 Para formalizar esta idea, se definen las siguientes relaciones para un conjunto de puntos de cambio $\(\mathcal{T}\)$:
 
-```math
-$SameSeg(T) := {(s,t) | 1 ≤ s < t ≤ T$ donde s y t están en el mismo segmento según T}
-```
-```math
-$DiffSeg(T) := {(s,t) | 1 ≤ s < t ≤ T$ donde s y t están en segmentos distintos según T}
-```
+$$
+\text{SameSeg}(\mathcal{T}) := \{(s,t) \mid 1 \leq s < t \leq T \text{ donde } s \text{ y } t \text{ están en el mismo segmento según } \mathcal{T}\}
+$$
+
+$$
+\text{DiffSeg}(\mathcal{T}) := \{(s,t) \mid 1 \leq s < t \leq T \text{ donde } s \text{ y } t \text{ están en segmentos distintos según } \mathcal{T}\}
+$$
 
 A partir de estas definiciones, el Índice de Rand se expresa como:
 
