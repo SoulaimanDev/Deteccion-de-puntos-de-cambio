@@ -93,9 +93,9 @@ Considero que una detección es válida cuando existe coincidencia dentro de un 
 
 **F1-score** se define como la media armónica entre la precisión y el recall:
 
-$$
+```math
 \text{F1} = 2 \cdot \frac{\text{Prec} \cdot \text{Rec}}{\text{Prec} + \text{Rec}} \in [0,1]
-$$
+```
 
 El mejor valor posible para esta métrica es 1, indicando una detección perfecta, mientras que su peor valor es 0.
 
@@ -103,7 +103,7 @@ El mejor valor posible para esta métrica es 1, indicando una detección perfect
 
 Desde un punto de vista formal, esta métrica corresponde a la mayor distancia temporal entre un punto de cambio y su correspondiente estimación:
 
-$$
+```math
 \text{Hausdorff}(\mathcal{T}^*,\widehat{\mathcal{T}}) = \max \left\{
 \underbrace{
 \max_{\hat{t}\in\widehat{\mathcal{T}}} \min_{t^*\in\mathcal{T}^*} |\hat{t}-t^*|
@@ -112,7 +112,7 @@ $$
 \max_{t^*\in\mathcal{T}^*} \min_{\hat{t}\in\widehat{\mathcal{T}}} |\hat{t}-t^*|
 }_{\text{Error máximo de omisión}}
 \right\}
-$$
+```
 
 donde:
 
@@ -141,16 +141,16 @@ El Índice de Rand calcula la proporción de pares de muestras que son:
 
 Para formalizar esta idea, se definen las siguientes relaciones para un conjunto de puntos de cambio $\(\mathcal{T}\)$:
 
-$$
+```math
 \text{SameSeg}(\mathcal{T}) &:= \{(s,t) \mid 1 \leq s < t \leq T \text{ tales que } s \text{ y } t \text{ se encuentran en el mismo segmento según } \mathcal{T}\} \\
 \text{DiffSeg}(\mathcal{T}) &:= \{(s,t) \mid 1 \leq s < t \leq T \text{ tales que } s \text{ y } t \text{ pertenecen a segmentos distintos según } \mathcal{T}\}
-$$
+```
 
 A partir de estas definiciones, el Índice de Rand se expresa como:
 
-$$
+```math
 \textsc{RI}(\mathcal{T}^{*},\widehat{\mathcal{T}}) := \frac{|\text{SameSeg}(\widehat{\mathcal{T}}) \cap \text{SameSeg}(\mathcal{T}^{*})| + |\text{DiffSeg}(\widehat{\mathcal{T}}) \cap \text{DiffSeg}(\mathcal{T}^{*})|}{T(T-1)/2}
-$$
+```
 
 Este valor se encuentra normalizado en el intervalo entre 0 (cuando no existe ningún acuerdo entre las segmentaciones) y 1 (cuando las segmentaciones son idénticas). 
 
