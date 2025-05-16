@@ -232,7 +232,7 @@ y_t = x_t' \delta_j + \varepsilon_t, \quad t_j \leq t < t_{j+1}
 donde:
 
 - $`y_t \in \mathbb{R}`$: Variable respuesta
-- $`x_t \in \mathbb{R}^p$`: Vector de covariables
+- $`x_t \in \mathbb{R}^p`$: Vector de covariables
 - $`\delta_j \in \mathbb{R}^p`$: Coeficientes de regresión para el $j$-ésimo segmento
 - $`\varepsilon_t`$: Término de error con $`\mathbb{E}[\varepsilon_t] = 0`$
 
@@ -251,12 +251,12 @@ Dado un conjunto de knots  $`\{t_k\}_{k=1}^K`$, el spline lineal continuo $`f:\m
     f(t) = \alpha_k(t - t_k) + \beta_k, \quad \alpha_k,\beta_k \in \mathbb{R}^d, \quad t \in [t_k,t_{k+1})
    ```
     
-- \textbf{Condición de continuidad}:
+- **Condición de continuidad**:
     ```math
     \lim_{t\to t_k^-} f(t) = \lim_{t\to t_k^+} f(t), \quad \forall k
     ```
 
-La función de costo \texttt{CostCLinear} mide el error al aproximar la señal con una spline lineal. Formalmente, se define para $`0 < a < b \leq T`$ como:
+La función de costo **CostCLinear** mide el error al aproximar la señal con una spline lineal. Formalmente, se define para $`0 < a < b \leq T`$ como:
 
 ```math
 c(y_{a,b}) := \sum_{t=a}^{b-1} \left\| y_t - y_{a-1} - \frac{t-a+1}{b-a} (y_{b-1} - y_{a-1}) \right\|^2
@@ -310,7 +310,7 @@ donde:
 
 - $`p`$: Orden del modelo (seleccionado mediante AIC en mi implementación)
 - $`\delta_j \in \mathbb{R}^p`$: Coeficientes AR para el `j`-ésimo segmento
-- $ `\epsilon_t`$: Innovaciones con $`\mathbb{E}[\epsilon_t] = 0`, `\text{Var}(\epsilon_t) = \sigma^2`$
+- $`\epsilon_t`$: Innovaciones con $`\mathbb{E}[\epsilon_t] = 0`, `\text{Var}(\epsilon_t) = \sigma^2`$
 
 La función de costo implementada minimiza la suma de residuos al cuadrado:
 
@@ -327,10 +327,10 @@ Esta sección presenta el segundo elemento definitorio de los métodos de detecc
 El algoritmo de **Segmentación Binaria (BinSeg)** es un método iterativo para detectar puntos de cambio en series temporales que opera mediante una estrategia greedy. En cada iteración, el algoritmo identifica el punto de cambio óptimo que minimiza la suma de costos de los segmentos adyacentes:
 
 ```math
-\hat{t}^{(k)} = \underset{a<t<b}{\text{argmin}} \left[c(y_{a..t}) + c(y_{t..b})\right]
+t̂⁽ᵏ⁾ = argmin_{a<t<b} [c(y_{a..t}) + c(y_{t..b})]
 ```
 
-donde $`c(\cdot)`$ representa típicamente el error cuadrático medio. A pesar de su eficiencia computacional $(`\mathcal{O}(n \log n)`)$, el enfoque greedy implica que cada punto de cambio se estima condicionado a los cambios anteriores, lo que puede afectar la optimalidad global. 
+donde $`c(\cdot)`$ representa típicamente el error cuadrático medio. A pesar de su eficiencia computacional         ($`\mathcal{O}(n \log n)`$), el enfoque greedy implica que cada punto de cambio se estima condicionado a los cambios anteriores, lo que puede afectar la optimalidad global. 
 ## Algoritmo BinSeg (Binary Segmentation)
 
 **Input**: 
@@ -380,12 +380,12 @@ donde $c(\cdot)$ es la función de costo, $\beta$ el parámetro de penalización
 ## Algoritmo PELT (Pruned Exact Linear Time)
 
 **Input**:
-- Señal `{y_t}_{t=1}^T`
-- Función de costo `c(·)`
-- Parámetro de penalización `β`
+- Señal $`{y_t}_{t=1}^T`$
+- Función de costo $`c(·)`$
+- Parámetro de penalización $`β`$
 
 **Output**:
-- Conjunto `L[T]` de puntos de cambio estimados
+- Conjunto $`L[T]`$ de puntos de cambio estimados
 
 ```python
 1: Initialize Z[0] = -β  # Costos acumulados
@@ -426,13 +426,13 @@ que cuantifica la ganancia al fusionar dos segmentos adyacentes.
 ## Algoritmo Bottom-Up
 
 **Input**:
-- Señal `{y_t}_{t=1}^T`
-- Función de costo `c(·)`
-- Tamaño de grilla `δ > 2`
+- Señal $`{y_t}_{t=1}^T`$
+- Función de costo $`c(·)`$
+- Tamaño de grilla $`δ > 2`$
 - Criterio de parada
 
 **Output**:
-- Conjunto `L` de puntos de cambio estimados
+- Conjunto $`L`$ de puntos de cambio estimados
 
 ```python
 1: Initialize L = {δ, 2δ, ..., (⌊T/δ⌋-1)δ}  # Puntos iniciales en grilla
@@ -451,7 +451,7 @@ que cuantifica la ganancia al fusionar dos segmentos adyacentes.
 ```
 #### Detección Window-Based
 
-El método \textit{Window-Based} es un algoritmo eficiente para detectar puntos de cambio mediante el análisis de discrepancia entre \textbf{segmentos adyacentes de tamaño \(w\)}. Utiliza dos fragmentos de la señal \(\{y_t\}_{t=1}^T\) que se deslizan a lo largo de ella, comparando sus propiedades estadísticas mediante una medida de discrepancia derivada de la función de costo \(c(\cdot)\).
+El método **Window-Based** es un algoritmo eficiente para detectar puntos de cambio mediante el análisis de discrepancia entre **segmentos adyacentes de tamaño \(w\)**. Utiliza dos fragmentos de la señal $\(\{y_t\}_{t=1}^T\)$ que se deslizan a lo largo de ella, comparando sus propiedades estadísticas mediante una medida de discrepancia derivada de la función de costo $\(c(\cdot)\$)$.
 
 ```math
 d(y_{u..w}, y_{v..w}) = c(y_{u..w}) - [c(y_{v..w}) + c(y_{u..v})]
@@ -468,13 +468,13 @@ Los picos en esta curva indican potenciales puntos de cambio, detectados mediant
 ## Algoritmo Window-Based
 
 **Input**:
-- Señal `{y_t}_{t=1}^T`
-- Función de costo `c(·)`
-- Ancho de media ventana `w`
-- Procedimiento `PKSearch` (detección de picos)
+- Señal $`{y_t}_{t=1}^T`$
+- Función de costo $`c(·)`$
+- Ancho de media ventana $`w`$
+- Procedimiento $`PKSearch`$ (detección de picos)
 
 **Output**:
-- Conjunto `L` de puntos de cambio estimados
+- Conjunto $`L`$ de puntos de cambio estimados
 
 ```python
 1: Initialize Z = [0,...,0]  # Array de longitud T
