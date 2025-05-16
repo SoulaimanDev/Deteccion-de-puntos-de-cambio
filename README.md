@@ -130,15 +130,16 @@ El Índice de Rand calcula la proporción de pares de muestras que son:
    
 Para formalizar esta idea, se definen las siguientes relaciones para un conjunto de puntos de cambio $`\mathcal{T}`$:
 
-```math
-\text{SameSeg}(\mathcal{T}) &:= \{(s,t) \mid 1 \leq s < t \leq T \text{ tales que } s \text{ y } t \text{ se encuentran en el mismo segmento según } \mathcal{T}\} \\
-\text{DiffSeg}(\mathcal{T}) &:= \{(s,t) \mid 1 \leq s < t \leq T \text{ tales que } s \text{ y } t \text{ pertenecen a segmentos distintos según } \mathcal{T}\}
-```
+**SameSeg(T)** :  
+`{(s,t) | 1 ≤ s < t ≤ T` où `s` et `t` sont dans le même segment selon `T`}
+
+**DiffSeg(T)** :  
+`{(s,t) | 1 ≤ s < t ≤ T` où `s` et `t` sont dans des segments différents selon `T`}
 
 A partir de estas definiciones, el Índice de Rand se expresa como:
 
 ```math
-\textsc{RI}(\mathcal{T}^{*},\widehat{\mathcal{T}}) := \frac{|\text{SameSeg}(\widehat{\mathcal{T}}) \cap \text{SameSeg}(\mathcal{T}^{*})| + |\text{DiffSeg}(\widehat{\mathcal{T}}) \cap \text{DiffSeg}(\mathcal{T}^{*})|}{T(T-1)/2}
+RI(\mathcal{T}^{*},\widehat{\mathcal{T}}) := \frac{|\text{SameSeg}(\widehat{\mathcal{T}}) \cap \text{SameSeg}(\mathcal{T}^{*})| + |\text{DiffSeg}(\widehat{\mathcal{T}}) \cap \text{DiffSeg}(\mathcal{T}^{*})|}{T(T-1)/2}
 ```
 
 Este valor se encuentra normalizado en el intervalo entre 0 (cuando no existe ningún acuerdo entre las segmentaciones) y 1 (cuando las segmentaciones son idénticas). 
@@ -170,7 +171,7 @@ donde $`\tilde{y}`$ corresponde a la mediana muestral del segmento.
 Esta función de costo permite detectar cambios tanto en la media como en la matriz de covarianza de una secuencia de variables aleatorias gaussianas multivariadas. Formalmente, para un segmento de señal $`\{y_t\}_{t \in I}`$ con $`y_t \in \mathbb{R}^d`$, la función de costo se define como:
 
 ```math
-c(y_I) = |I| \cdot \log \det(\widehat{\Sigma}_I + \epsilon I_d)
+c(y_I) = |I| \cdot \log \det(\Sigma_I + \epsilon I_d)
 ```math
 
 donde:
