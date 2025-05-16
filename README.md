@@ -336,9 +336,7 @@ Esta sección presenta el segundo elemento definitorio de los métodos de detecc
 
 El algoritmo de **Segmentación Binaria (BinSeg)** es un método iterativo para detectar puntos de cambio en series temporales que opera mediante una estrategia greedy. En cada iteración, el algoritmo identifica el punto de cambio óptimo que minimiza la suma de costos de los segmentos adyacentes:
 
-```math
-t̂⁽ᵏ⁾ = argmin_{a<t<b} [c(y_{a..t}) + c(y_{t..b})]
-```
+$t̂⁽ᵏ⁾ = argmin_[a<t<b] c(y_[a..t]) + c(y_[t..b])$
 
 donde $`c(\cdot)`$ representa típicamente el error cuadrático medio. A pesar de su eficiencia computacional         ($`\mathcal{O}(n \log n)`$), el enfoque greedy implica que cada punto de cambio se estima condicionado a los cambios anteriores, lo que puede afectar la optimalidad global. 
 ## Algoritmo BinSeg (Binary Segmentation)
@@ -461,7 +459,7 @@ que cuantifica la ganancia al fusionar dos segmentos adyacentes.
 ```
 #### Detección Window-Based
 
-El método **Window-Based** es un algoritmo eficiente para detectar puntos de cambio mediante el análisis de discrepancia entre **segmentos adyacentes de tamaño \(w\)**. Utiliza dos fragmentos de la señal $\(\{y_t\}_{t=1}^T\)$ que se deslizan a lo largo de ella, comparando sus propiedades estadísticas mediante una medida de discrepancia derivada de la función de costo $\(c(\cdot)\$)$.
+El método **Window-Based** es un algoritmo eficiente para detectar puntos de cambio mediante el análisis de discrepancia entre **segmentos adyacentes de tamaño \(w\)**. Utiliza dos fragmentos de la señal $\(\{y_t\}_{t=1}^T\)$ que se deslizan a lo largo de ella, comparando sus propiedades estadísticas mediante una medida de discrepancia derivada de la función de costo $\(c(\cdot)\)$.
 
 ```math
 d(y_{u..w}, y_{v..w}) = c(y_{u..w}) - [c(y_{v..w}) + c(y_{u..v})]
