@@ -164,6 +164,179 @@ Este valor se encuentra normalizado en el intervalo entre 0 (cuando no existe ni
 [Retour au menu](#Menú-de-navegación)
 
 ---
+### Funciones de costo
+
+Esta sección presenta el primer elemento definitorio de los métodos de detección de cambios, que son las funciones de costo. En la mayoría de los casos, estas funciones se derivan a partir de un modelo de señal. A continuación, se agrupa los modelos y sus funciones de costo asociadas en dos categorías: paramétricas y no paramétricas.
+
+#### Función de Costo L1
+
+Esta función de costo detecta cambios en la mediana de una señal. En general, es un estimador robusto para detectar desplazamientos en el punto central (ya sea media, mediana o moda) de una distribución.
+
+Formalmente, dado un segmento de señal `{y_t}_{t ∈ I}` donde `I` representa el intervalo de análisis, el costo se calcula como:
+
+```math
+c(y_I) = ∑_{t ∈ I} ‖y_t - ȳ‖_1
+```
+
+donde `ȳ` corresponde a la mediana muestral del segmento.
+
+#### Función de Costo L2
+
+La función CostL2 cuantifica la variabilidad alrededor de la media muestral mediante la norma euclídea al cuadrado. Para un segmento de señal `{y_t}_{t ∈ I}` donde `I` denota el intervalo de estudio, el costo se define como:
+
+```math
+c(y_I) = ∑_{t ∈ I} ‖y_t - ȳ‖_2^2 
+```
+
+donde `ȳ` corresponde a la media muestral del segmento.
+
+#### Función de Costo Normal
+
+Esta función de costo permite detectar cambios tanto en la media como en la matriz de covarianza de una secuencia de variables aleatorias gaussianas multivariadas. Formalmente, para un segmento de señal `{y_t}_{t ∈ I}` con `y_t ∈ ℝ^d`, la función de costo se define como:
+
+```math
+c(y_I) = |I| · log det(Σ̂_I + εI_d)
+```
+
+donde:
+- `Σ̂_I = 1/(|I|-1) ∑_{t ∈ I} (y_t - ȳ_I)(y_t - ȳ_I)^⊤` es la matriz de covarianza muestral del segmento
+- `ȳ_I` es la media empírica del segmento
+- `ε > 0` es un término de regularización (típicamente `ε = 10^{-6}`)
+- `I_d` es la matriz identidad de dimensión `d × d`
+
+#### Cambio de media con kernel (CostRbf)
+
+La función `CostRbf` opera mediante el mapeo de los datos a un espacio de características `H` mediante la función `Φ(·)`. Para un segmento `{y_t}_{t ∈ I}` con `y_t ∈ ℝ^d`, el costo se calcula como:
+
+```math
+c(y_I) = ∑_{t ∈ I} ‖Φ(y_t) - μ̄‖_H^2
+```
+
+donde `μ̄ = 1/|I| ∑_{t ∈ I} Φ(y_t)` representa la media en el espacio de características.
+
+El kernel radial (RBF) implementado tiene la forma:
+
+```math
+k(x,y) = exp(-γ‖x - y‖^2), γ > 0
+```
+
+donde `γ = 1/mediana({‖y_i - y_j‖^2}_{i,j})`.
+
+#### Cambio de media con kernel (CostCosine)
+
+La función de costo evalúa la variabilidad en el espacio de características `H` generado por el kernel coseno:
+
+```math
+c(y_{a..b}) = ∑_{t=a}^{b-1} ‖Φ(y_t) - μ̄_{a..b}‖_H^2
+```
+
+donde:
+- `Φ: ℝ^d → H` es el mapeo al espacio de características
+- `μ̄_{a..b} = 1/(b-a) ∑_{t=a}^{b-1} Φ(y_t)` es la media empírica en `H`
+- El kernel coseno se define como:
+  ```math
+  k(x,y) = (⟨x, y⟩)/(‖x‖_2 ‖y‖_2) ∈ [-1,1]
+  ```
+
+#### Cambio en modelo lineal (CostLinear)
+
+Consideremos una serie temporal `{y_t}_{t=1}^n` con posibles puntos de cambio en `t_1, t_2, ..., t_k`. El modelo de regresión por segmentos se define como:
+
+```math
+y_t = x_t' δ_j + ε_t, t_j ≤ t < t_{j+1}
+```
+
+donde:
+- `y_t ∈ ℝ`: Variable respuesta
+- `x_t ∈ ℝ^p`: Vector de covariables
+- `δ_j ∈ ℝ^p`: Coeficientes de regresión para el j-ésimo segmento
+- `ε_t`: Término de error con `𝔼[ε_t] = 0`
+
+La función de costo asociada a un intervalo `I` se define como:
+
+```math
+c(y_I) = min_{δ ∈ ℝ^p} ∑_{t ∈ I} ‖ y_t - δ' x_t ‖_2^2
+```
+
+#### Cambio lineal continuo (CostCLinear)
+
+Dado un conjunto de knots `{t_k}_{k=1}^K`, el spline lineal continuo `f:ℝ→ℝ^d` se define mediante:
+
+- **Comportamiento afín por intervalos**:
+  ```math
+  f(t) = α_k(t - t_k) + β_k, α_k,β_k ∈ ℝ^d, t ∈ [t_k,t_{k+1})
+  ```
+- **Condición de continuidad**:
+  ```math
+  lim_{t→t_k^-} f(t) = lim_{t→t_k^+} f(t), ∀k
+  ```
+
+La función de costo `CostCLinear` se define para `0 < a < b ≤ T` como:
+
+```math
+c(y_{a,b}) := ∑_{t=a}^{b-1} ‖ y_t - y_{a-1} - (t-a+1)/(b-a) (y_{b-1} - y_{a-1}) ‖^2
+```
+
+#### Función de costo basada en rangos (CostRank)
+
+La transformación de los datos originales `{y_t}_{t=1}^T` a sus rangos `{r_t}_{t=1}^T`:
+
+```math
+r_t = text{rango}(y_t text{ en } {y_1,...,y_T})
+```
+
+Para un segmento `y_{a..b}`, la función de costo:
+
+```math
+c_{rank}(a,b) = -(b-a) r̄_{a..b}' Σ̂_r^{-1} r̄_{a..b}
+```
+
+donde:
+- `r̄_{a..b} = 1/(b-a)∑_{t=a+1}^b r_t` es la media de rangos
+- `Σ̂_r` es la matriz de covarianza estimada de los rangos completos
+
+#### Detección de cambios con métrica Mahalanobis (CostMl)
+
+Dada una matriz semidefinida positiva `M ∈ ℝ^{d × d}`, la pseudométrica:
+
+```math
+‖x - y‖_{M}^2 = (x - y)^T M (x - y)
+```
+
+Para un segmento `{y_t}_{t ∈ I}`, la función de costo:
+
+```math
+c(y_I) = ∑_{t ∈ I} ‖y_t - μ̄‖_M^2
+```
+
+donde `μ̄ = 1/|I|∑_{t ∈ I} y_t` es la media empírica.
+
+#### Cambio de modelo autorregresivo (CostAR)
+
+Para una serie temporal `{y_t}_{t=1}^n` con posibles puntos de cambio, el modelo AR(p) por segmentos:
+
+```math
+y_t = ∑_{i=1}^p δ_{j,i} y_{t-i} + ϵ_t, t_j ≤ t < t_{j+1}
+```
+
+La función de costo implementada:
+
+```math
+c(y_I) = min_{δ ∈ ℝ^p} ∑_{t ∈ I} (y_t - δ' z_t)^2
+```
+
+con `z_t = [y_{t-1}, ..., y_{t-p}]'`.
+
+
+
+---
+
+[Retour au menu](#Menú-de-navegación)
+
+---
+
+
+---
 
 En el archivo Generación_de_series.ipynb he generado dos series temporales para probar los algoritmos que voy a presentar. Los puntos de cambio en la primera serie temporal son más fáciles de detectar,
 mientras que en la segunda son más difíciles de identificar.
