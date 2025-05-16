@@ -64,7 +64,7 @@ El método PELT (Pruned Exact Linear Time) es una técnica bastante eficiente pa
 
 Los métodos para detectar puntos de cambio se pueden evaluar de dos formas: una es demostrando ciertas propiedades matemáticas de los algoritmos y la otra es hacerlo de forma empírica, calculando distintas métricas.
 
-En lo que sigue, al conjunto de los puntos de cambio verdaderos lo denoto como `$\mathcal{T}^* = \{ t_1^*, \ldots, t_K^* \}$`, y al conjunto de los puntos de cambio estimados lo denoto como `\widehat{\mathcal{T}} = \{\hat{t}_1, \ldots, \hat{t}_{\hat{K}} \}`.
+En lo que sigue, al conjunto de los puntos de cambio verdaderos lo denoto como $`\mathcal{T}^* = \{ t_1^*, \ldots, t_K^* \}`$, y al conjunto de los puntos de cambio estimados lo denoto como `\widehat{\mathcal{T}} = \{\hat{t}_1, \ldots, \hat{t}_{\hat{K}} \}`.
 #### F1-Score
 
 La métrica F1-Score emerge como indicador robusto para evaluar el rendimiento en esta tarea. Su cálculo se basa en dos componentes esenciales:
