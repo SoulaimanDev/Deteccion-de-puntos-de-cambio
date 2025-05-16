@@ -328,174 +328,163 @@ El algoritmo de **Segmentación Binaria (BinSeg)** es un método iterativo para 
 \hat{t}^{(k)} = \underset{a<t<b}{\text{argmin}} \left[c(y_{a..t}) + c(y_{t..b})\right]
 ```
 
-donde `c(\cdot)` representa típicamente el error cuadrático medio. A pesar de su eficiencia computacional (`\mathcal{O}(n \log n)`), el enfoque greedy implica que cada punto de cambio se estima condicionado a los cambios anteriores, lo que puede afectar la optimalidad global.
-
-\begin{algorithm}
-\caption{Algoritmo BinSeg}\label{alg:binseg}
-\begin{algorithmic}[1]
-\Require Señal $\{y_t\}_{t=1}^T$, función de costo $c(\cdot)$, criterio de parada
-\Ensure Conjunto $L$ de puntos de cambio estimados
-\State Inicializar $L \gets \emptyset$ \Comment{Lista de puntos de cambio}
-\Repeat
-\State $k \gets |L|$ \Comment{Número actual de puntos de cambio}
-\State $t_0 \gets 0$, $t_{k+1} \gets T$ \Comment{Límites del segmento completo}
-\If{$k > 0$}
-\State Ordenar $L = \{t_1, \ldots, t_k\}$ ascendentemente
-\EndIf
-\State Inicializar arreglo $G$ de longitud $k+1$ \Comment{Ganancias por segmento}
-\For{$i \gets 0$ \textbf{to} $k$}
-\State Calcular ganancia:
-\State $G[i] \gets c(y_{t_i..t_{i+1}}) - \min\limits_{t_i < t < t_{i+1}} \left[c(y_{t_i..t}) + c(y_{t..t_{i+1}})\right]$
-\EndFor
-\State $\hat{i} \gets \underset{i}{\text{argmax}}\, G[i]$ \Comment{Segmento con máxima ganancia}
-\State $\hat{t} \gets \underset{t_{\hat{i}} < t < t_{\hat{i}+1}}{\text{argmin}} \left[c(y_{t_{\hat{i}}..t}) + c(y_{t..t_{\hat{i}+1}})\right]$
-\State $L \gets L \cup \{\hat{t}\}$ \Comment{Añadir nuevo punto de cambio}
-\Until{criterio de parada sea satisfecho}
-\State \Return $L$
-\end{algorithmic}
-\end{algorithm}
-
-
-
-## Algoritmo BinSeg
+donde `c(\cdot)` representa típicamente el error cuadrático medio. A pesar de su eficiencia computacional (`\mathcal{O}(n \log n)`), el enfoque greedy implica que cada punto de cambio se estima condicionado a los cambios anteriores, lo que puede afectar la optimalidad global. 
+## Algoritmo BinSeg (Binary Segmentation)
 
 **Input**: 
-- Señal `{y_t}_{t=1}^T`
-- Función de costo `c(·)`
-- Criterio de parada
+- Señal `{y_t}_{t=1}^T` (serie temporal)
+- Función de costo `c(·)` (ej: L1, L2, normal)
+- Criterio de parada (ej: número máximo de cambios o umbral de ganancia)
 
 **Output**: 
-- Conjunto `L` de puntos de cambio estimados
+- Conjunto `L` de puntos de cambio estimados (índices)
 
 ```python
-1: Initialize L = ∅  # Lista de puntos de cambio
+1: Initialize L = ∅  # Lista vacía de puntos de cambio
 2: repeat
 3:   k = |L|  # Número actual de puntos de cambio
-4:   t₀ = 0, t_{k+1} = T  # Límites del segmento completo
+4:   t₀ = 0, t_{k+1} = T  # Límites iniciales
 5:   if k > 0 then
-6:     Sort L = {t₁, ..., t_k} ascendentemente
+6:     Sort L = {t₁, ..., t_k} ascendentemente  # Ordenar puntos existentes
 7:   end if
-8:   Initialize array G of length k+1  # Ganancias por segmento
+8:   Initialize array G of length k+1  # Almacenará ganancias por segmento
 9:   for i = 0 to k do
-10:    # Calcular ganancia
+10:    # Calcular ganancia potencial para el segmento actual
 11:    G[i] = c(y_{t_i..t_{i+1}}) - min_{t_i < t < t_{i+1}} [c(y_{t_i..t}) + c(y_{t..t_{i+1}})]
 12:  end for
-13:  î = argmax_i G[i]  # Segmento con máxima ganancia
-14:  t̂ = argmin_{t_î < t < t_{î+1}} [c(y_{t_î..t}) + c(y_{t..t_{î+1}})]
-15:  L = L ∪ {t̂}  # Añadir nuevo punto de cambio
-16: until stopping criterion is met
-17: return L
+13:  î = argmax_i G[i]  # Índice del segmento con máxima ganancia
+14:  # Encontrar mejor punto de división en el segmento seleccionado
+15:  t̂ = argmin_{t_î < t < t_{î+1}} [c(y_{t_î..t}) + c(y_{t..t_{î+1}})]
+16:  L = L ∪ {t̂}  # Añadir nuevo punto de cambio
+17: until stopping criterion is met  # Ej: |L| ≥ K_max o max(G) < ε
+18: return sorted(L)  # Devuelve puntos ordenados
+```
+
+
 
 
 El algoritmo termina cuando se alcanza un número máximo de cambios o cuando la máxima ganancia $G[i]$ está por debajo de un umbral predefinido. Esta aproximación balancea eficiencia computacional con capacidad de detección, siendo particularmente útil cuando el número de segmentos es desconocido a priori.
 
 
-
-
-\subsection{Segmentación PELT (Pruned Exact Linear Time)}
+#### Segmentación PELT (Pruned Exact Linear Time)
 El método PELT es un algoritmo de detección exacta de puntos de cambio que combina optimalidad global con eficiencia computacional mediante técnicas de poda dinámica. A diferencia de métodos aproximados como BinSeg, PELT garantiza encontrar la partición óptima de la serie temporal minimizando:
 
-\begin{equation}
+```math
 \sum_{i=1}^{m+1} c(y_{\tau_{i-1}:\tau_i}) + \beta m
-\end{equation}
+```
 
 donde $c(\cdot)$ es la función de costo, $\beta$ el parámetro de penalización y $m$ el número de cambios. La clave del algoritmo reside en su capacidad para descartar particiones subóptimas manteniendo únicamente las soluciones relevantes.
 
-\begin{algorithm}
-\caption{Algoritmo PELT}\label{alg:pelt}
-\begin{algorithmic}[1]
-\Require Señal $\{y_t\}_{t=1}^T$, función de costo $c(\cdot)$, penalización $\beta$
-\Ensure Conjunto $L[T]$ de puntos de cambio estimados
-\State Inicializar $Z[0] \gets -\beta$ \Comment{Costos acumulados}
-\State Inicializar $L[0] \gets \emptyset$ \Comment{Lista de cambios}
-\State Inicializar $\chi \gets \{0\}$ \Comment{Conjunto activo de índices}
-\For{$t \gets 1$ \textbf{hasta} $T$}
-\State Encontrar el punto óptimo previo:
-\State $\hat{t} \gets \underset{s \in \chi}{\arg\min}\, [Z[s] + c(y_{s:t}) + \beta]$
-\State Actualizar costo acumulado:
-\State $Z[t] \gets Z[\hat{t}] + c(y_{\hat{t}:t}) + \beta$
-\State Registrar cambios:
-\State $L[t] \gets L[\hat{t}] \cup \{\hat{t}\}$
-\State Poda dinámica:
-\State $\chi \gets \{s \in \chi : Z[s] + c(y_{s:t}) \leq Z[t]\} \cup \{t\}$
-\EndFor
-\State \Return $L[T]$
-\end{algorithmic}
-\end{algorithm}
+## Algoritmo PELT (Pruned Exact Linear Time)
+
+**Input**:
+- Señal `{y_t}_{t=1}^T`
+- Función de costo `c(·)`
+- Parámetro de penalización `β`
+
+**Output**:
+- Conjunto `L[T]` de puntos de cambio estimados
+
+```python
+1: Initialize Z[0] = -β  # Costos acumulados
+2: Initialize L[0] = ∅   # Lista de cambios
+3: Initialize χ = {0}    # Conjunto activo de índices
+4: for t = 1 to T do
+5:   # Encontrar punto óptimo previo
+6:   t̂ = argmin_{s ∈ χ} [Z[s] + c(y_{s:t}) + β]
+7:   
+8:   # Actualizar costo acumulado
+9:   Z[t] = Z[t̂] + c(y_{t̂:t}) + β
+10:  
+11:  # Registrar cambios
+12:  L[t] = L[t̂] ∪ {t̂}
+13:  
+14:  # Poda dinámica
+15:  χ = {s ∈ χ | Z[s] + c(y_{s:t}) ≤ Z[t]} ∪ {t}
+16: end for
+17: return L[T]
+```
+
 
 El algoritmo mantiene un conjunto activo $\chi$ de índices candidatos, actualizando en cada iteración tanto los costos acumulados $Z[t]$ como la lista de cambios $L[t]$. La regla de poda (línea 9) asegura que solo se conserven las particiones que potencialmente pueden llevar a la solución óptima global, reduciendo así la complejidad computacional sin sacrificar precisión.
-
-\subsection{Segmentación Bottom-Up}
+#### Segmentación Bottom-Up
 El método Bottom-Up es un enfoque no greedy para la detección de puntos de cambio que opera mediante fusión progresiva de segmentos. A diferencia de métodos como BinSeg que dividen la señal, este algoritmo sigue una estrategia de unificación: comienza con una partición inicial fina (definida por un parámetro de grilla $\delta$) y fusiona iterativamente los pares de segmentos más similares hasta satisfacer un criterio de parada. Matemáticamente, el proceso optimiza:
 
-\begin{equation}
+```math
 \min_{L} \sum_{i=0}^{k} c(y_{t_i:t_{i+1}})
-\end{equation}
+```
 
 donde $L = \{t_1, \ldots, t_k\}$ son los puntos de cambio y $c(\cdot)$ es la función de costo. La clave del método reside en su métrica de fusión:
 
-\begin{equation}
+```math
 G[i] = c(y_{t_{i-1}:t_{i+1}}) - \left[c(y_{t_{i-1}:t_i}) + c(y_{t_i:t_{i+1}})\right]
-\end{equation}
-
+```
 que cuantifica la ganancia al fusionar dos segmentos adyacentes.
 
-\begin{algorithm}
-\caption{Algoritmo Bottom-Up}\label{alg:bottomup}
-\begin{algorithmic}[1]
-\Require Señal $\{y_t\}_{t=1}^T$, función de costo $c(\cdot)$, tamaño de grilla $\delta > 2$, criterio de parada
-\Ensure Conjunto $L$ de puntos de cambio estimados
-\State Inicializar $L \gets \{\delta, 2\delta, \ldots, (\lfloor T/\delta \rfloor -1)\delta\}$
-\Repeat
-\State $k \gets |L|$
-\State Ordenar $L = \{t_1, \ldots, t_k\}$ ascendentemente
-\State Inicializar array $G$ de longitud $k-1$
-\For{$i \gets 1$ \textbf{to} $k-1$}
-\State Calcular ganancia de fusión:
-\State $G[i-1] \gets c(y_{t_{i-1}:t_{i+1}}) - \left[c(y_{t_{i-1}:t_i}) + c(y_{t_i:t_{i+1}})\right]$
-\EndFor
-\State $\hat{i} \gets \underset{i}{\text{argmin}}\, G[i]$ \Comment{Seleccionar fusión óptima}
-\State $L \gets L \setminus \{t_{\hat{i}+1}\}$ \Comment{Eliminar punto de cambio}
-\Until{criterio de parada sea satisfecho}
-\State \Return $L$
-\end{algorithmic}
-\end{algorithm}
-\subsection{Detección Window-Based}
+## Algoritmo Bottom-Up
+
+**Input**:
+- Señal `{y_t}_{t=1}^T`
+- Función de costo `c(·)`
+- Tamaño de grilla `δ > 2`
+- Criterio de parada
+
+**Output**:
+- Conjunto `L` de puntos de cambio estimados
+
+```python
+1: Initialize L = {δ, 2δ, ..., (⌊T/δ⌋-1)δ}  # Puntos iniciales en grilla
+2: repeat
+3:   k = |L|  # Número actual de puntos de cambio
+4:   Sort L = {t₁, ..., t_k} ascendentemente
+5:   Initialize array G of length k-1  # Ganancias de fusión
+6:   for i = 1 to k-1 do
+7:     # Calcular ganancia de fusión
+8:     G[i-1] = c(y_{t_{i-1}:t_{i+1}}) - [c(y_{t_{i-1}:t_i}) + c(y_{t_i:t_{i+1}})]
+9:   end for
+10:  î = argmin_i G[i]  # Seleccionar fusión óptima
+11:  L = L \ {t_{î+1}}  # Eliminar punto de cambio
+12: until stopping criterion is met
+13: return L
+```
+#### Detección Window-Based
 
 El método \textit{Window-Based} es un algoritmo eficiente para detectar puntos de cambio mediante el análisis de discrepancia entre \textbf{segmentos adyacentes de tamaño \(w\)}. Utiliza dos fragmentos de la señal \(\{y_t\}_{t=1}^T\) que se deslizan a lo largo de ella, comparando sus propiedades estadísticas mediante una medida de discrepancia derivada de la función de costo \(c(\cdot)\).
 
-
-\begin{equation}
+```math
 d(y_{u..w}, y_{v..w}) = c(y_{u..w}) - [c(y_{v..w}) + c(y_{u..v})]
-\end{equation}
+```
 
 donde $u < v < w$ son índices temporales. La curva de discrepancia se define para cada punto $t$ como:
 
-\begin{equation}
+```math
 Z[t] = c(y_{t-w..t+w}) - [c(y_{t-w..t}) + c(y_{t..t+w})]
-\end{equation}
+```
 
 Los picos en esta curva indican potenciales puntos de cambio, detectados mediante un procedimiento de búsqueda de máximos locales (PKSearch).
 
-\begin{algorithm}
-\caption{Algoritmo Window-Based}\label{alg:window}
-\begin{algorithmic}[1]
-\Require Señal $\{y_t\}_{t=1}^T$, función de costo $c(\cdot)$, ancho de media ventana $w$, procedimiento PKSearch
-\Ensure Conjunto $L$ de puntos de cambio estimados
-\State Inicializar $Z \gets [0,\ldots,0]$ \Comment{Array de longitud $T$}
-\For{$t \gets w$ \textbf{to} $T-w$}
-\State $p \gets (t-w)..t$ \Comment{Ventana izquierda}
-\State $q \gets t..(t+w)$ \Comment{Ventana derecha}
-\State $r \gets (t-w)..(t+w)$ \Comment{Ventana combinada}
-\State $Z[t] \gets c(y_r) - [c(y_p) + c(y_q)]$ \Comment{Discrepancia}
-\EndFor
-\State $L \gets \text{PKSearch}(Z)$ \Comment{Detección de picos}
-\State \Return $L$
-\end{algorithmic}
-\end{algorithm}
+## Algoritmo Window-Based
 
+**Input**:
+- Señal `{y_t}_{t=1}^T`
+- Función de costo `c(·)`
+- Ancho de media ventana `w`
+- Procedimiento `PKSearch` (detección de picos)
 
+**Output**:
+- Conjunto `L` de puntos de cambio estimados
 
+```python
+1: Initialize Z = [0,...,0]  # Array de longitud T
+2: for t = w to T-w do
+3:   p = (t-w)..t      # Ventana izquierda (pasado)
+4:   q = t..(t+w)      # Ventana derecha (futuro)
+5:   r = (t-w)..(t+w)  # Ventana combinada
+6:   Z[t] = c(y_r) - [c(y_p) + c(y_q)]  # Cálculo de discrepancia
+7: end for
+8: L = PKSearch(Z)     # Detectar picos en Z
+9: return L
+```
 
 ---
 
