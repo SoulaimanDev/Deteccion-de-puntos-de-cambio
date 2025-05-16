@@ -25,6 +25,9 @@
    - [Segmentación PELT](#segmentación-pelt)
    - [Segmentación Bottom-Up](#segmentación-bottom-up)
    - [Detección Window-Based](#detección-window-based)
+ 6.[Aplicación de Métodos](#Aplicación-de-Métodos)  
+   - [varianza_constante](#varianza_constante)
+   - [varianza_variable](#varianza_variable)
 
 
 
@@ -501,14 +504,31 @@ Los picos en esta curva indican potenciales puntos de cambio, detectados mediant
 
 ---
 
+### Aplicación de Métodos
+
+El proyecto se organiza en dos carpetas principales dentro de `notebooks/`:
+
+#### 📁 `varianza_constante/`  
+Contiene los notebooks que trabajan con una serie temporal de **varianza constante**:
+
+- `Generacion_varianza_constante.ipynb` → Generación de la serie.
+- `Deteccion_PELT.ipynb` → Aplicación del algoritmo **PELT**.
+- `Deteccion_ChangeFinder.ipynb` → Aplicación del algoritmo **ChangeFinder**.
+- `Deteccion_BinSeg.ipynb` → Aplicación del método **Binary Segmentation**.
+- `Deteccion_WindowBased.ipynb` → Aplicación del método **Window-Based**.
+- `Deteccion_BottomUp.ipynb` → Aplicación del método **Bottom-Up**.
+
 
 ---
 
-En el archivo Generación_de_series.ipynb he generado dos series temporales para probar los algoritmos que voy a presentar. Los puntos de cambio en la primera serie temporal son más fáciles de detectar,
-mientras que en la segunda son más difíciles de identificar.
+#### 📁 `varianza_variable/`  
+Contiene los notebooks que trabajan con una serie temporal de **varianza variable**, donde los puntos de cambio son más difíciles de identificar:
 
-En el archivo Varianza_constante_PELT.ipynb Se hace la evaluación del Algoritmo PELT con Varianza Constante.
-En el archivo Varianza_variable_PELT.ipynb Se hace la evaluación del Algoritmo PELT con Varianza Variable.
-En el archivo Varianza_constante_ChangeFinder.ipynb Se hace la evaluación del Algoritmo ChangeFinder con Varianza Constante.
-En el archivo Varianza_variable_ChangeFinder.ipynb Se hace la evaluación del Algoritmo ChangeFinder con Varianza Variable.
+- `Generacion_varianza_variable.ipynb` → Generación de la serie.
+- `Deteccion_PELT.ipynb` → Evaluación del algoritmo **PELT**.
+- `Deteccion_ChangeFinder.ipynb` → Evaluación del algoritmo **ChangeFinder**.
+- `Deteccion_BinSeg.ipynb` → Aplicación del método **Binary Segmentation**.
+- `Deteccion_WindowBased.ipynb` → Aplicación del método **Window-Based**.
+- `Deteccion_BottomUp.ipynb` → Aplicación del método **Bottom-Up**.
 
+---
