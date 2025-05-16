@@ -167,12 +167,12 @@ c(y_I) = \sum_{t \in I} \|y_t - \bar{y}\|_2^2
 
 donde $`\tilde{y}`$ corresponde a la mediana muestral del segmento.
 
-\subsection{Función de Costo Normal}
+#### Función de Costo Normal
 Esta función de costo permite detectar cambios tanto en la media como en la matriz de covarianza de una secuencia de variables aleatorias gaussianas multivariadas. Formalmente, para un segmento de señal $`\{y_t\}_{t \in I}`$ con $`y_t \in \mathbb{R}^d`$, la función de costo se define como:
 
 ```math
-c(y_I) = |I| \cdot \log \det(\Sigma_I + \epsilon I_d)
-```math
+c(y_I) = |I| \cdot \log \det(\widehat{\Sigma}_I + \epsilon I_d)
+```
 
 donde:
 ```math
