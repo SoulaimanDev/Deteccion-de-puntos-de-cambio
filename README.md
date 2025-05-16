@@ -143,6 +143,11 @@ RI(\mathcal{T}^{*},\widehat{\mathcal{T}}) := \frac{|\text{SameSeg}(\widehat{\mat
 ```
 
 Este valor se encuentra normalizado en el intervalo entre 0 (cuando no existe ningún acuerdo entre las segmentaciones) y 1 (cuando las segmentaciones son idénticas). 
+---
+
+[Retour au menu](#Menú-de-navegación)
+
+---
 ### funciones de costo
 
 Esta sección presenta el primer elemento definitorio de los métodos de detección de cambios, que son las funciones de costo. En la mayoría de los casos, estas funciones se derivan a partir de un modelo de señal. A continuación, se agrupa los modelos y sus funciones de costo asociadas en dos categorías: paramétricas y no paramétricas.
@@ -319,6 +324,11 @@ c(y_I) = \min_{\delta \in \mathbb{R}^p} \sum_{t \in I} (y_t - \delta' z_t)^2
 ```
 
 con $`z_t = [y_{t-1}, \ldots, y_{t-p}]'`$.
+---
+
+[Retour au menu](#Menú-de-navegación)
+
+---
 ### Métodos de búsqueda de puntos de cambio
 
 Esta sección presenta el segundo elemento definitorio de los métodos de detección de cambios, concretamente el **método de búsqueda**. Los algoritmos de búsqueda determinan cómo se exploran las posibles configuraciones de puntos de cambio en la serie temporal, afectando tanto a la precisión como a la eficiencia computacional del método.
