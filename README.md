@@ -350,24 +350,24 @@ donde $`c(\cdot)`$ representa típicamente el error cuadrático medio. A pesar d
 - Conjunto $`L`$ de puntos de cambio estimados (índices)
 
 ```python
-1: Initialize L = ∅  # Lista vacía de puntos de cambio
+1: Initialize L = ∅  
 2: repeat
-3:   k = |L|  # Número actual de puntos de cambio
-4:   t₀ = 0, t_{k+1} = T  # Límites iniciales
+3:   k = |L|  
+4:   t₀ = 0, t_{k+1} = T  
 5:   if k > 0 then
-6:     Sort L = {t₁, ..., t_k} ascendentemente  # Ordenar puntos existentes
+6:     Sort L = {t₁, ..., t_k} ascendentemente  
 7:   end if
-8:   Initialize array G of length k+1  # Almacenará ganancias por segmento
+8:   Initialize array G of length k+1  
 9:   for i = 0 to k do
-10:    # Calcular ganancia potencial para el segmento actual
+10:    
 11:    G[i] = c(y_{t_i..t_{i+1}}) - min_{t_i < t < t_{i+1}} [c(y_{t_i..t}) + c(y_{t..t_{i+1}})]
 12:  end for
-13:  î = argmax_i G[i]  # Índice del segmento con máxima ganancia
-14:  # Encontrar mejor punto de división en el segmento seleccionado
+13:  î = argmax_i G[i]  
+14:  
 15:  t̂ = argmin_{t_î < t < t_{î+1}} [c(y_{t_î..t}) + c(y_{t..t_{î+1}})]
-16:  L = L ∪ {t̂}  # Añadir nuevo punto de cambio
-17: until stopping criterion is met  # Ej: |L| ≥ K_max o max(G) < ε
-18: return sorted(L)  # Devuelve puntos ordenados
+16:  L = L ∪ {t̂} 
+17: until stopping criterion is met  
+18: return sorted(L)  
 ```
 
 
@@ -396,20 +396,20 @@ donde $c(\cdot)$ es la función de costo, $\beta$ el parámetro de penalización
 - Conjunto $`L[T]`$ de puntos de cambio estimados
 
 ```python
-1: Initialize Z[0] = -β  # Costos acumulados
-2: Initialize L[0] = ∅   # Lista de cambios
-3: Initialize χ = {0}    # Conjunto activo de índices
+1: Initialize Z[0] = -β 
+2: Initialize L[0] = ∅   
+3: Initialize χ = {0}   
 4: for t = 1 to T do
-5:   # Encontrar punto óptimo previo
+5:  
 6:   t̂ = argmin_{s ∈ χ} [Z[s] + c(y_{s:t}) + β]
 7:   
-8:   # Actualizar costo acumulado
+8:   
 9:   Z[t] = Z[t̂] + c(y_{t̂:t}) + β
 10:  
-11:  # Registrar cambios
+11:  
 12:  L[t] = L[t̂] ∪ {t̂}
 13:  
-14:  # Poda dinámica
+14:  
 15:  χ = {s ∈ χ | Z[s] + c(y_{s:t}) ≤ Z[t]} ∪ {t}
 16: end for
 17: return L[T]
@@ -443,17 +443,17 @@ que cuantifica la ganancia al fusionar dos segmentos adyacentes.
 - Conjunto $`L`$ de puntos de cambio estimados
 
 ```python
-1: Initialize L = {δ, 2δ, ..., (⌊T/δ⌋-1)δ}  # Puntos iniciales en grilla
+1: Initialize L = {δ, 2δ, ..., (⌊T/δ⌋-1)δ}  
 2: repeat
-3:   k = |L|  # Número actual de puntos de cambio
+3:   k = |L|  
 4:   Sort L = {t₁, ..., t_k} ascendentemente
-5:   Initialize array G of length k-1  # Ganancias de fusión
+5:   Initialize array G of length k-1  
 6:   for i = 1 to k-1 do
-7:     # Calcular ganancia de fusión
+7:    
 8:     G[i-1] = c(y_{t_{i-1}:t_{i+1}}) - [c(y_{t_{i-1}:t_i}) + c(y_{t_i:t_{i+1}})]
 9:   end for
-10:  î = argmin_i G[i]  # Seleccionar fusión óptima
-11:  L = L \ {t_{î+1}}  # Eliminar punto de cambio
+10:  î = argmin_i G[i]  
+11:  L = L \ {t_{î+1}}  
 12: until stopping criterion is met
 13: return L
 ```
@@ -485,15 +485,14 @@ Los picos en esta curva indican potenciales puntos de cambio, detectados mediant
 - Conjunto $`L`$ de puntos de cambio estimados
 
 ```python
-1: Initialize Z = [0,...,0]  # Array de longitud T
+1: Initialize Z = [0,...,0]  
 2: for t = w to T-w do
-3:   p = (t-w)..t      # Ventana izquierda (pasado)
-4:   q = t..(t+w)      # Ventana derecha (futuro)
-5:   r = (t-w)..(t+w)  # Ventana combinada
-6:   Z[t] = c(y_r) - [c(y_p) + c(y_q)]  # Cálculo de discrepancia
+3:   p = (t-w)..t      
+4:   q = t..(t+w)      
+5:   r = (t-w)..(t+w)  
+6:   Z[t] = c(y_r) - [c(y_p) + c(y_q)]  
 7: end for
-8: L = PKSearch(Z)     # Detectar picos en Z
-9: return L
+8: L = PKSearch(Z)     
 ```
 
 ---
