@@ -59,239 +59,441 @@ El método PELT (Pruned Exact Linear Time) es una técnica bastante eficiente pa
 
 ---
 
-### Evaluación
+#### Evaluación
+
 
 Los métodos para detectar puntos de cambio se pueden evaluar de dos formas: una es demostrando ciertas propiedades matemáticas de los algoritmos y la otra es hacerlo de forma empírica, calculando distintas métricas.
 
-En lo que sigue, al conjunto de los puntos de cambio verdaderos lo denoto como `T* = {t₁*, ..., t_K*}`, y al conjunto de los puntos de cambio estimados lo denoto como `T̂ = {t̂₁, ..., t̂_K̂}`.
-
+En lo que sigue, al conjunto de los puntos de cambio verdaderos lo denoto como `\mathcal{T}^* = \{ t_1^*, \ldots, t_K^* \}`, y al conjunto de los puntos de cambio estimados lo denoto como `\widehat{\mathcal{T}} = \{\hat{t}_1, \ldots, \hat{t}_{\hat{K}} \}`.
 #### F1-Score
 
 La métrica F1-Score emerge como indicador robusto para evaluar el rendimiento en esta tarea. Su cálculo se basa en dos componentes esenciales:
 
-**Precisión (Prec)**: Mide la fiabilidad de las detecciones  
+**Precisión (Prec)**: Mide la fiabilidad de las detecciones
 ```math
-\text{Prec} = \frac{|\text{Tp}|}{\hat{K}}
+\text{Prec} = \frac{\text{Detecciones correctas}}{\text{Total de detecciones}} = \frac{|\text{Tp}|}{\hat{K}}
 ```
 
-**Exhaustividad (Rec)**: Evalúa la capacidad de descubrimiento  
+**Exhaustividad (Rec)**: Evalúa la capacidad de descubrimiento
 ```math
-\text{Rec} = \frac{|\text{Tp}|}{K^*}
+\text{Rec} = \frac{\text{Detecciones correctas}}{\text{Total de puntos reales}} = \frac{|\text{Tp}|}{K^*}
 ```
 
-Considero que una detección es válida cuando existe coincidencia dentro de un margen `M` muestral:
+ Considero que una detección es válida cuando existe coincidencia dentro de un margen $M$ muestral:
 ```math
-\text{Tp} = \{ t^* \in \mathcal{T}^* \mid \exists\, \hat{t} \in \widehat{\mathcal{T}} : |\hat{t} - t^*| < M \}
+\text{Tp} = \big\{ t^* \in \mathcal{T}^* \mid \exists\, \hat{t} \in \widehat{\mathcal{T}} \,:\, |\hat{t} - t^*| < M \big\}
 ```
 
 **F1-score** se define como la media armónica entre la precisión y el recall:
+
 ```math
 \text{F1} = 2 \cdot \frac{\text{Prec} \cdot \text{Rec}}{\text{Prec} + \text{Rec}} \in [0,1]
 ```
 
+El mejor valor posible para esta métrica es 1, indicando una detección perfecta, mientras que su peor valor es 0.
 #### Hausdorff
 
-Esta métrica corresponde a la mayor distancia temporal entre un punto de cambio y su correspondiente estimación:
+Desde un punto de vista formal, esta métrica corresponde a la mayor distancia temporal entre un punto de cambio y su correspondiente estimación:
+
 ```math
 \text{Hausdorff}(\mathcal{T}^*,\widehat{\mathcal{T}}) = \max \left\{
-\max_{\hat{t}\in\widehat{\mathcal{T}}} \min_{t^*\in\mathcal{T}^*} |\hat{t}-t^*|,
+\underbrace{
+\max_{\hat{t}\in\widehat{\mathcal{T}}} \min_{t^*\in\mathcal{T}^*} |\hat{t}-t^*|
+}_{\text{Error máximo de detección}},
+\underbrace{
 \max_{t^*\in\mathcal{T}^*} \min_{\hat{t}\in\widehat{\mathcal{T}}} |\hat{t}-t^*|
+}_{\text{Error máximo de omisión}}
 \right\}
 ```
 
-Donde:
-- Primer término: máxima distancia de cualquier punto detectado al punto real más cercano (Error máximo de detección)
-- Segundo término: máxima distancia de cualquier punto real al punto detectado más cercano (Error máximo de omisión)
+donde:
 
-#### Índice de Rand
+- El primer término evalúa la máxima distancia de cualquier punto detectado al punto real más cercano
+- El segundo término mide la máxima distancia de cualquier punto real al punto detectado más cercano
 
-Compara la similitud entre la segmentación obtenida `T̂` y la segmentación de referencia `T*`:
+Este valor representa el peor error cometido por el algoritmo que genera el conjunto de puntos estimados `\widehat{\mathcal{T}}`, y se expresa en número de muestras. Cuando su valor es cero, significa que ambos conjuntos de puntos de cambio coinciden exactamente. Por el contrario, cuanto mayor sea su valor, mayor será la distancia existente entre algún punto de cambio verdadero en `\mathcal{T}^{*}` y el punto estimado más cercano en `\widehat{\mathcal{T}}`, o viceversa.
 
-**Definiciones:**
+\subsection{ Índice de Rand}
+
+La métrica fundamental Índice de Rand  cuantifica la precisión en la detección de puntos de cambio. Esta medida estadística compara la similitud entre la segmentación obtenida `\widehat{\mathcal{T}}` y la segmentación de referencia `\mathcal{T}^{*}`, proporcionando una evaluación global del rendimiento del algoritmo.
+
+El Índice de Rand calcula la proporción de pares de muestras que son:
+
+- **Concordantes**: 
+ 
+- Pertenecen al mismo segmento en ambas segmentaciones
+-Pertenecen a segmentos diferentes en ambas segmentaciones
+
+ **Discordantes**:
+    
+- Asignados al mismo segmento en una segmentación y a diferentes en la otra
+   
+Para formalizar esta idea, se definen las siguientes relaciones para un conjunto de puntos de cambio `\mathcal{T}`:
+
 ```math
-\text{SameSeg}(\mathcal{T}) := \{(s,t) \mid 1 \leq s < t \leq T \text{ en mismo segmento según } \mathcal{T}\}
+\text{SameSeg}(\mathcal{T}) &:= \{(s,t) \mid 1 \leq s < t \leq T \text{ tales que } s \text{ y } t \text{ se encuentran en el mismo segmento según } \mathcal{T}\} \\
+\text{DiffSeg}(\mathcal{T}) &:= \{(s,t) \mid 1 \leq s < t \leq T \text{ tales que } s \text{ y } t \text{ pertenecen a segmentos distintos según } \mathcal{T}\}
 ```
+
+A partir de estas definiciones, el Índice de Rand se expresa como:
+
 ```math
-\text{DiffSeg}(\mathcal{T}) := \{(s,t) \mid 1 \leq s < t \leq T \text{ en segmentos distintos según } \mathcal{T}\}
+\textsc{RI}(\mathcal{T}^{*},\widehat{\mathcal{T}}) := \frac{|\text{SameSeg}(\widehat{\mathcal{T}}) \cap \text{SameSeg}(\mathcal{T}^{*})| + |\text{DiffSeg}(\widehat{\mathcal{T}}) \cap \text{DiffSeg}(\mathcal{T}^{*})|}{T(T-1)/2}
 ```
 
-**Índice de Rand:**
-```math
-\text{RI}(\mathcal{T}^{*},\widehat{\mathcal{T}}) = \frac{|\text{SameSeg}(\widehat{\mathcal{T}}) \cap \text{SameSeg}(\mathcal{T}^{*})| + |\text{DiffSeg}(\widehat{\mathcal{T}}) \cap \text{DiffSeg}(\mathcal{T}^{*})|}{T(T-1)/2}
-```
-
-**Interpretación:**
-- **Concordantes**:
-  - Mismo segmento en ambas segmentaciones
-  - Distintos segmentos en ambas segmentaciones
-- **Discordantes**:
-  - Mismo segmento en una, distintos en otra
-
-[Retour au menu](#Menú-de-navegación)
-
----
-### Funciones de costo
+Este valor se encuentra normalizado en el intervalo entre 0 (cuando no existe ningún acuerdo entre las segmentaciones) y 1 (cuando las segmentaciones son idénticas). 
+### funciones de costo
 
 Esta sección presenta el primer elemento definitorio de los métodos de detección de cambios, que son las funciones de costo. En la mayoría de los casos, estas funciones se derivan a partir de un modelo de señal. A continuación, se agrupa los modelos y sus funciones de costo asociadas en dos categorías: paramétricas y no paramétricas.
 
-#### Función de Costo L1
+### Función de Costo L1
 
-Esta función de costo detecta cambios en la mediana de una señal. En general, es un estimador robusto para detectar desplazamientos en el punto central (ya sea media, mediana o moda) de una distribución.
-
-Formalmente, dado un segmento de señal `{y_t}_{t ∈ I}` donde `I` representa el intervalo de análisis, el costo se calcula como:
+Esta función de costo detecta cambios en la mediana de una señal. En general, es un estimador robusto para detectar desplazamientos en el punto central (ya sea media, mediana o moda) de una distribución .
+Formalmente, dado un segmento de señal `\{y_t\}_{t \in I}` donde $I$ representa el intervalo de análisis, el costo se calcula como:
 
 ```math
-c(y_I) = ∑_{t ∈ I} ‖y_t - ȳ‖_1
+c(y_I) = \sum_{t \in I} \|y_t - \tilde{y}\|_1
 ```
 
-donde `ȳ` corresponde a la mediana muestral del segmento.
+donde `\tilde{y}` corresponde a la mediana muestral del segmento.
 
 #### Función de Costo L2
-
-La función CostL2 cuantifica la variabilidad alrededor de la media muestral mediante la norma euclídea al cuadrado. Para un segmento de señal `{y_t}_{t ∈ I}` donde `I` denota el intervalo de estudio, el costo se define como:
-
-```math
-c(y_I) = ∑_{t ∈ I} ‖y_t - ȳ‖_2^2 
-```
-
-donde `ȳ` corresponde a la media muestral del segmento.
-
-#### Función de Costo Normal
-
-Esta función de costo permite detectar cambios tanto en la media como en la matriz de covarianza de una secuencia de variables aleatorias gaussianas multivariadas. Formalmente, para un segmento de señal `{y_t}_{t ∈ I}` con `y_t ∈ ℝ^d`, la función de costo se define como:
+La función CostL2 cuantifica la variabilidad alrededor de la media muestral mediante la norma euclídea al cuadrado. Para un segmento de señal `\{y_t\}_{t \in I}` donde $I$ denota el intervalo de estudio, el costo se define como:
 
 ```math
-c(y_I) = |I| · log det(Σ̂_I + εI_d)
+c(y_I) = \sum_{t \in I} \|y_t - \bar{y}\|_2^2 
 ```
+
+donde `\tilde{y}` corresponde a la mediana muestral del segmento.
+
+\subsection{Función de Costo Normal}
+Esta función de costo permite detectar cambios tanto en la media como en la matriz de covarianza de una secuencia de variables aleatorias gaussianas multivariadas. Formalmente, para un segmento de señal `\{y_t\}_{t \in I}` con `y_t \in \mathbb{R}^d`, la función de costo se define como:
+
+```math
+c(y_I) = |I| \cdot \log \det(\widehat{\Sigma}_I + \epsilon I_d)
+```math
 
 donde:
-- `Σ̂_I = 1/(|I|-1) ∑_{t ∈ I} (y_t - ȳ_I)(y_t - ȳ_I)^⊤` es la matriz de covarianza muestral del segmento
-- `ȳ_I` es la media empírica del segmento
-- `ε > 0` es un término de regularización (típicamente `ε = 10^{-6}`)
-- `I_d` es la matriz identidad de dimensión `d × d`
+```math
+ `\widehat{\Sigma}_I = \frac{1}{|I|-1} \sum_{t \in I} (y_t - \bar{y}_I)(y_t - \bar{y}_I)^\top`
+```
+es la matriz de covarianza muestral del segmento.
+  - `\bar{y}_I` es la media empírica del segmento.
+  - `\epsilon > 0` es un término de regularización (típicamente `\epsilon = 10^{-6}`) que se añade para evitar problemas numéricos en matrices mal condicionadas.
+ - `I_d` es la matriz identidad de dimensión `d \times d`.
 
 #### Cambio de media con kernel (CostRbf)
 
-La función `CostRbf` opera mediante el mapeo de los datos a un espacio de características `H` mediante la función `Φ(·)`. Para un segmento `{y_t}_{t ∈ I}` con `y_t ∈ ℝ^d`, el costo se calcula como:
+La función **CostRbf** opera mediante el mapeo de los datos a un espacio de características `\mathcal{H}` mediante la función `\Phi(\cdot)`, donde se analizan las propiedades estadísticas. Para un segmento `\{y_t\}_{t \in I}` con `y_t \in \mathbb{R}^d`, el costo se calcula como:
 
 ```math
-c(y_I) = ∑_{t ∈ I} ‖Φ(y_t) - μ̄‖_H^2
+c(y_I) = \sum_{t \in I} \|\Phi(y_t) - \bar{\mu}\|_{\mathcal{H}}^2
 ```
 
-donde `μ̄ = 1/|I| ∑_{t ∈ I} Φ(y_t)` representa la media en el espacio de características.
-
+donde `\bar{\mu} = \frac{1}{|I|}\sum_{t \in I} \Phi(y_t)` representa la media en el espacio de características.
+ 
 El kernel radial (RBF) implementado tiene la forma:
 
 ```math
-k(x,y) = exp(-γ‖x - y‖^2), γ > 0
+k(x,y) = \exp\left(-\gamma \|x - y\|^2\right), \quad \gamma > 0
 ```
 
-donde `γ = 1/mediana({‖y_i - y_j‖^2}_{i,j})`.
+donde `\gamma = 1/\text{mediana}(\{\|y_i - y_j\|^2\}_{i,j})`.
 
 #### Cambio de media con kernel (CostCosine)
 
-La función de costo evalúa la variabilidad en el espacio de características `H` generado por el kernel coseno:
+La función de costo evalúa la variabilidad en el espacio de características `\mathcal{H}` generado por el kernel coseno:
 
 ```math
-c(y_{a..b}) = ∑_{t=a}^{b-1} ‖Φ(y_t) - μ̄_{a..b}‖_H^2
+c(y_{a..b}) = \sum_{t=a}^{b-1} \|\Phi(y_t) - \bar{\mu}_{a..b}\|_{\mathcal{H}}^2
 ```
 
 donde:
-- `Φ: ℝ^d → H` es el mapeo al espacio de características
-- `μ̄_{a..b} = 1/(b-a) ∑_{t=a}^{b-1} Φ(y_t)` es la media empírica en `H`
+
+- `\Phi: \mathbb{R}^d \rightarrow \mathcal{H}` es el mapeo al espacio de características
+- `\bar{\mu}_{a..b} = \frac{1}{b-a}\sum_{t=a}^{b-1} \Phi(y_t)` es la media empírica en `\mathcal{H}`
 - El kernel coseno se define como:
-  ```math
-  k(x,y) = (⟨x, y⟩)/(‖x‖_2 ‖y‖_2) ∈ [-1,1]
-  ```
+    ```math
+    k(x,y) = \frac{\langle x, y \rangle}{\|x\|_2 \|y\|_2} \in [-1,1]
+   ```
+
+
+donde `\langle \cdot \mid \cdot \rangle$ y $\|\cdot\|` corresponden al producto escalar y la norma euclidiana respectivamente. Dicho de otro modo, equivale al producto punto normalizado en norma L2 de los vectores.
 
 #### Cambio en modelo lineal (CostLinear)
-
-Consideremos una serie temporal `{y_t}_{t=1}^n` con posibles puntos de cambio en `t_1, t_2, ..., t_k`. El modelo de regresión por segmentos se define como:
+Consideremos una serie temporal `\{y_t\}_{t=1}^n` con posibles puntos de cambio en `t_1, t_2, \ldots, t_k`. El modelo de regresión por segmentos se define como:
 
 ```math
-y_t = x_t' δ_j + ε_t, t_j ≤ t < t_{j+1}
+y_t = x_t' \delta_j + \varepsilon_t, \quad t_j \leq t < t_{j+1}
 ```
 
 donde:
-- `y_t ∈ ℝ`: Variable respuesta
-- `x_t ∈ ℝ^p`: Vector de covariables
-- `δ_j ∈ ℝ^p`: Coeficientes de regresión para el j-ésimo segmento
-- `ε_t`: Término de error con `𝔼[ε_t] = 0`
 
-La función de costo asociada a un intervalo `I` se define como:
+- `y_t \in \mathbb{R}`: Variable respuesta
+- `x_t \in \mathbb{R}^p`: Vector de covariables
+- `\delta_j \in \mathbb{R}^p`: Coeficientes de regresión para el $j$-ésimo segmento
+- `\varepsilon_t`: Término de error con `\mathbb{E}[\varepsilon_t] = 0`
+
+
+Las estimaciones por mínimos cuadrados de las fechas de ruptura se obtienen minimizando la suma de los residuos al cuadrado. Formalmente, la función de costo asociada a un intervalo $I$ se define como:
 
 ```math
-c(y_I) = min_{δ ∈ ℝ^p} ∑_{t ∈ I} ‖ y_t - δ' x_t ‖_2^2
+c(y_I) = \min_{\delta \in \mathbb{R}^p} \sum_{t \in I} \| y_t - \delta' x_t \|_2^2
 ```
-
 #### Cambio lineal continuo (CostCLinear)
+Dado un conjunto de knots  `\{t_k\}_{k=1}^K`, el spline lineal continuo `f:\mathbb{R}\rightarrow\mathbb{R}^d` se define mediante:
 
-Dado un conjunto de knots `{t_k}_{k=1}^K`, el spline lineal continuo `f:ℝ→ℝ^d` se define mediante:
 
 - **Comportamiento afín por intervalos**:
-  ```math
-  f(t) = α_k(t - t_k) + β_k, α_k,β_k ∈ ℝ^d, t ∈ [t_k,t_{k+1})
-  ```
-- **Condición de continuidad**:
-  ```math
-  lim_{t→t_k^-} f(t) = lim_{t→t_k^+} f(t), ∀k
-  ```
+    ```math
+    f(t) = \alpha_k(t - t_k) + \beta_k, \quad \alpha_k,\beta_k \in \mathbb{R}^d, \quad t \in [t_k,t_{k+1})
+   ```
+    
+- \textbf{Condición de continuidad}:
+    ```math
+    \lim_{t\to t_k^-} f(t) = \lim_{t\to t_k^+} f(t), \quad \forall k
+    ```
 
-La función de costo `CostCLinear` se define para `0 < a < b ≤ T` como:
+La función de costo \texttt{CostCLinear} mide el error al aproximar la señal con una spline lineal. Formalmente, se define para `0 < a < b \leq T` como:
 
 ```math
-c(y_{a,b}) := ∑_{t=a}^{b-1} ‖ y_t - y_{a-1} - (t-a+1)/(b-a) (y_{b-1} - y_{a-1}) ‖^2
+c(y_{a,b}) := \sum_{t=a}^{b-1} \left\| y_t - y_{a-1} - \frac{t-a+1}{b-a} (y_{b-1} - y_{a-1}) \right\|^2
 ```
+
+y se toma `c(y_{0,b}) = c(y_{1,b})`.
 
 #### Función de costo basada en rangos (CostRank)
-
-La transformación de los datos originales `{y_t}_{t=1}^T` a sus rangos `{r_t}_{t=1}^T`:
+La clave de este método reside en la transformación de los datos originales `\{y_t\}_{t=1}^T` a sus rangos `\{r_t\}_{t=1}^T`, donde:
 
 ```math
-r_t = text{rango}(y_t text{ en } {y_1,...,y_T})
+r_t = \text{rango}(y_t \text{ en } \{y_1,\ldots,y_T\})
 ```
 
-Para un segmento `y_{a..b}`, la función de costo:
+Para un segmento `y_{a..b}`, la función de costo se define como:
 
 ```math
-c_{rank}(a,b) = -(b-a) r̄_{a..b}' Σ̂_r^{-1} r̄_{a..b}
+c_{\text{rank}}(a,b) = -(b-a) \bar{r}_{a..b}^\prime \widehat{\Sigma}_r^{-1} \bar{r}_{a..b}
 ```
 
 donde:
-- `r̄_{a..b} = 1/(b-a)∑_{t=a+1}^b r_t` es la media de rangos
-- `Σ̂_r` es la matriz de covarianza estimada de los rangos completos
 
-#### Detección de cambios con métrica Mahalanobis (CostMl)
+- `\bar{r}_{a..b} = \frac{1}{b-a}\sum_{t=a+1}^b r_t` es la media de rangos en el segmento
+- `\widehat{\Sigma}_r` es la matriz de covarianza estimada de los rangos completos
 
-Dada una matriz semidefinida positiva `M ∈ ℝ^{d × d}`, la pseudométrica:
+#### Detección de cambios con una métrica de tipo Mahalanobis (CostMl)
 
-```math
-‖x - y‖_{M}^2 = (x - y)^T M (x - y)
-```
-
-Para un segmento `{y_t}_{t ∈ I}`, la función de costo:
+Dada una matriz semidefinida positiva `M \in \mathbb{R}^{d \times d}`, definimos la pseudométrica:
 
 ```math
-c(y_I) = ∑_{t ∈ I} ‖y_t - μ̄‖_M^2
+\|x - y\|_{M}^2 = (x - y)^T M (x - y)
 ```
 
-donde `μ̄ = 1/|I|∑_{t ∈ I} y_t` es la media empírica.
+Para un segmento de señal `\{y_t\}_{t \in I}`, la función de costo se calcula como:
+
+```math
+c(y_I) = \sum_{t \in I} \|y_t - \bar{\mu}\|_M^2
+```
+
+donde `\bar{\mu} = \frac{1}{|I|}\sum_{t \in I} y_t` es la media empírica del segmento.
 
 #### Cambio de modelo autorregresivo (CostAR)
 
-Para una serie temporal `{y_t}_{t=1}^n` con posibles puntos de cambio, el modelo AR(p) por segmentos:
+Considerando una serie temporal `\{y_t\}_{t=1}^n` con posibles puntos de cambio en `\{t_j\}_{j=1}^k`, el modelo `AR``(p)` por segmentos se define como:
 
 ```math
-y_t = ∑_{i=1}^p δ_{j,i} y_{t-i} + ϵ_t, t_j ≤ t < t_{j+1}
+y_t = \sum_{i=1}^p \delta_{j,i} y_{t-i} + \epsilon_t, \quad t_j \leq t < t_{j+1}
 ```
 
-La función de costo implementada:
+donde:
+
+- `p`: Orden del modelo (seleccionado mediante AIC en mi implementación)
+- `\delta_j \in \mathbb{R}^p`: Coeficientes AR para el `j`-ésimo segmento
+- `\epsilon_t`: Innovaciones con `\mathbb{E}[\epsilon_t] = 0`, `\text{Var}(\epsilon_t) = \sigma^2`
+
+La función de costo implementada minimiza la suma de residuos al cuadrado:
 
 ```math
-c(y_I) = min_{δ ∈ ℝ^p} ∑_{t ∈ I} (y_t - δ' z_t)^2
+c(y_I) = \min_{\delta \in \mathbb{R}^p} \sum_{t \in I} (y_t - \delta' z_t)^2
 ```
 
-con `z_t = [y_{t-1}, ..., y_{t-p}]'`.
+con `z_t = [y_{t-1}, \ldots, y_{t-p}]'`.
+### Métodos de búsqueda de puntos de cambio
+
+Esta sección presenta el segundo elemento definitorio de los métodos de detección de cambios, concretamente el **método de búsqueda**. Los algoritmos de búsqueda determinan cómo se exploran las posibles configuraciones de puntos de cambio en la serie temporal, afectando tanto a la precisión como a la eficiencia computacional del método.
+#### Segmentación Binaria (BinSeg)
+
+El algoritmo de **Segmentación Binaria (BinSeg)** es un método iterativo para detectar puntos de cambio en series temporales que opera mediante una estrategia greedy. En cada iteración, el algoritmo identifica el punto de cambio óptimo que minimiza la suma de costos de los segmentos adyacentes:
+
+```math
+\hat{t}^{(k)} = \underset{a<t<b}{\text{argmin}} \left[c(y_{a..t}) + c(y_{t..b})\right]
+```
+
+donde `c(\cdot)` representa típicamente el error cuadrático medio. A pesar de su eficiencia computacional (`\mathcal{O}(n \log n)`), el enfoque greedy implica que cada punto de cambio se estima condicionado a los cambios anteriores, lo que puede afectar la optimalidad global.
+
+\begin{algorithm}
+\caption{Algoritmo BinSeg}\label{alg:binseg}
+\begin{algorithmic}[1]
+\Require Señal $\{y_t\}_{t=1}^T$, función de costo $c(\cdot)$, criterio de parada
+\Ensure Conjunto $L$ de puntos de cambio estimados
+\State Inicializar $L \gets \emptyset$ \Comment{Lista de puntos de cambio}
+\Repeat
+\State $k \gets |L|$ \Comment{Número actual de puntos de cambio}
+\State $t_0 \gets 0$, $t_{k+1} \gets T$ \Comment{Límites del segmento completo}
+\If{$k > 0$}
+\State Ordenar $L = \{t_1, \ldots, t_k\}$ ascendentemente
+\EndIf
+\State Inicializar arreglo $G$ de longitud $k+1$ \Comment{Ganancias por segmento}
+\For{$i \gets 0$ \textbf{to} $k$}
+\State Calcular ganancia:
+\State $G[i] \gets c(y_{t_i..t_{i+1}}) - \min\limits_{t_i < t < t_{i+1}} \left[c(y_{t_i..t}) + c(y_{t..t_{i+1}})\right]$
+\EndFor
+\State $\hat{i} \gets \underset{i}{\text{argmax}}\, G[i]$ \Comment{Segmento con máxima ganancia}
+\State $\hat{t} \gets \underset{t_{\hat{i}} < t < t_{\hat{i}+1}}{\text{argmin}} \left[c(y_{t_{\hat{i}}..t}) + c(y_{t..t_{\hat{i}+1}})\right]$
+\State $L \gets L \cup \{\hat{t}\}$ \Comment{Añadir nuevo punto de cambio}
+\Until{criterio de parada sea satisfecho}
+\State \Return $L$
+\end{algorithmic}
+\end{algorithm}
+
+
+
+## Algoritmo BinSeg
+
+**Input**: 
+- Señal `{y_t}_{t=1}^T`
+- Función de costo `c(·)`
+- Criterio de parada
+
+**Output**: 
+- Conjunto `L` de puntos de cambio estimados
+
+```python
+1: Initialize L = ∅  # Lista de puntos de cambio
+2: repeat
+3:   k = |L|  # Número actual de puntos de cambio
+4:   t₀ = 0, t_{k+1} = T  # Límites del segmento completo
+5:   if k > 0 then
+6:     Sort L = {t₁, ..., t_k} ascendentemente
+7:   end if
+8:   Initialize array G of length k+1  # Ganancias por segmento
+9:   for i = 0 to k do
+10:    # Calcular ganancia
+11:    G[i] = c(y_{t_i..t_{i+1}}) - min_{t_i < t < t_{i+1}} [c(y_{t_i..t}) + c(y_{t..t_{i+1}})]
+12:  end for
+13:  î = argmax_i G[i]  # Segmento con máxima ganancia
+14:  t̂ = argmin_{t_î < t < t_{î+1}} [c(y_{t_î..t}) + c(y_{t..t_{î+1}})]
+15:  L = L ∪ {t̂}  # Añadir nuevo punto de cambio
+16: until stopping criterion is met
+17: return L
+
+
+El algoritmo termina cuando se alcanza un número máximo de cambios o cuando la máxima ganancia $G[i]$ está por debajo de un umbral predefinido. Esta aproximación balancea eficiencia computacional con capacidad de detección, siendo particularmente útil cuando el número de segmentos es desconocido a priori.
+
+
+
+
+\subsection{Segmentación PELT (Pruned Exact Linear Time)}
+El método PELT es un algoritmo de detección exacta de puntos de cambio que combina optimalidad global con eficiencia computacional mediante técnicas de poda dinámica. A diferencia de métodos aproximados como BinSeg, PELT garantiza encontrar la partición óptima de la serie temporal minimizando:
+
+\begin{equation}
+\sum_{i=1}^{m+1} c(y_{\tau_{i-1}:\tau_i}) + \beta m
+\end{equation}
+
+donde $c(\cdot)$ es la función de costo, $\beta$ el parámetro de penalización y $m$ el número de cambios. La clave del algoritmo reside en su capacidad para descartar particiones subóptimas manteniendo únicamente las soluciones relevantes.
+
+\begin{algorithm}
+\caption{Algoritmo PELT}\label{alg:pelt}
+\begin{algorithmic}[1]
+\Require Señal $\{y_t\}_{t=1}^T$, función de costo $c(\cdot)$, penalización $\beta$
+\Ensure Conjunto $L[T]$ de puntos de cambio estimados
+\State Inicializar $Z[0] \gets -\beta$ \Comment{Costos acumulados}
+\State Inicializar $L[0] \gets \emptyset$ \Comment{Lista de cambios}
+\State Inicializar $\chi \gets \{0\}$ \Comment{Conjunto activo de índices}
+\For{$t \gets 1$ \textbf{hasta} $T$}
+\State Encontrar el punto óptimo previo:
+\State $\hat{t} \gets \underset{s \in \chi}{\arg\min}\, [Z[s] + c(y_{s:t}) + \beta]$
+\State Actualizar costo acumulado:
+\State $Z[t] \gets Z[\hat{t}] + c(y_{\hat{t}:t}) + \beta$
+\State Registrar cambios:
+\State $L[t] \gets L[\hat{t}] \cup \{\hat{t}\}$
+\State Poda dinámica:
+\State $\chi \gets \{s \in \chi : Z[s] + c(y_{s:t}) \leq Z[t]\} \cup \{t\}$
+\EndFor
+\State \Return $L[T]$
+\end{algorithmic}
+\end{algorithm}
+
+El algoritmo mantiene un conjunto activo $\chi$ de índices candidatos, actualizando en cada iteración tanto los costos acumulados $Z[t]$ como la lista de cambios $L[t]$. La regla de poda (línea 9) asegura que solo se conserven las particiones que potencialmente pueden llevar a la solución óptima global, reduciendo así la complejidad computacional sin sacrificar precisión.
+
+\subsection{Segmentación Bottom-Up}
+El método Bottom-Up es un enfoque no greedy para la detección de puntos de cambio que opera mediante fusión progresiva de segmentos. A diferencia de métodos como BinSeg que dividen la señal, este algoritmo sigue una estrategia de unificación: comienza con una partición inicial fina (definida por un parámetro de grilla $\delta$) y fusiona iterativamente los pares de segmentos más similares hasta satisfacer un criterio de parada. Matemáticamente, el proceso optimiza:
+
+\begin{equation}
+\min_{L} \sum_{i=0}^{k} c(y_{t_i:t_{i+1}})
+\end{equation}
+
+donde $L = \{t_1, \ldots, t_k\}$ son los puntos de cambio y $c(\cdot)$ es la función de costo. La clave del método reside en su métrica de fusión:
+
+\begin{equation}
+G[i] = c(y_{t_{i-1}:t_{i+1}}) - \left[c(y_{t_{i-1}:t_i}) + c(y_{t_i:t_{i+1}})\right]
+\end{equation}
+
+que cuantifica la ganancia al fusionar dos segmentos adyacentes.
+
+\begin{algorithm}
+\caption{Algoritmo Bottom-Up}\label{alg:bottomup}
+\begin{algorithmic}[1]
+\Require Señal $\{y_t\}_{t=1}^T$, función de costo $c(\cdot)$, tamaño de grilla $\delta > 2$, criterio de parada
+\Ensure Conjunto $L$ de puntos de cambio estimados
+\State Inicializar $L \gets \{\delta, 2\delta, \ldots, (\lfloor T/\delta \rfloor -1)\delta\}$
+\Repeat
+\State $k \gets |L|$
+\State Ordenar $L = \{t_1, \ldots, t_k\}$ ascendentemente
+\State Inicializar array $G$ de longitud $k-1$
+\For{$i \gets 1$ \textbf{to} $k-1$}
+\State Calcular ganancia de fusión:
+\State $G[i-1] \gets c(y_{t_{i-1}:t_{i+1}}) - \left[c(y_{t_{i-1}:t_i}) + c(y_{t_i:t_{i+1}})\right]$
+\EndFor
+\State $\hat{i} \gets \underset{i}{\text{argmin}}\, G[i]$ \Comment{Seleccionar fusión óptima}
+\State $L \gets L \setminus \{t_{\hat{i}+1}\}$ \Comment{Eliminar punto de cambio}
+\Until{criterio de parada sea satisfecho}
+\State \Return $L$
+\end{algorithmic}
+\end{algorithm}
+\subsection{Detección Window-Based}
+
+El método \textit{Window-Based} es un algoritmo eficiente para detectar puntos de cambio mediante el análisis de discrepancia entre \textbf{segmentos adyacentes de tamaño \(w\)}. Utiliza dos fragmentos de la señal \(\{y_t\}_{t=1}^T\) que se deslizan a lo largo de ella, comparando sus propiedades estadísticas mediante una medida de discrepancia derivada de la función de costo \(c(\cdot)\).
+
+
+\begin{equation}
+d(y_{u..w}, y_{v..w}) = c(y_{u..w}) - [c(y_{v..w}) + c(y_{u..v})]
+\end{equation}
+
+donde $u < v < w$ son índices temporales. La curva de discrepancia se define para cada punto $t$ como:
+
+\begin{equation}
+Z[t] = c(y_{t-w..t+w}) - [c(y_{t-w..t}) + c(y_{t..t+w})]
+\end{equation}
+
+Los picos en esta curva indican potenciales puntos de cambio, detectados mediante un procedimiento de búsqueda de máximos locales (PKSearch).
+
+\begin{algorithm}
+\caption{Algoritmo Window-Based}\label{alg:window}
+\begin{algorithmic}[1]
+\Require Señal $\{y_t\}_{t=1}^T$, función de costo $c(\cdot)$, ancho de media ventana $w$, procedimiento PKSearch
+\Ensure Conjunto $L$ de puntos de cambio estimados
+\State Inicializar $Z \gets [0,\ldots,0]$ \Comment{Array de longitud $T$}
+\For{$t \gets w$ \textbf{to} $T-w$}
+\State $p \gets (t-w)..t$ \Comment{Ventana izquierda}
+\State $q \gets t..(t+w)$ \Comment{Ventana derecha}
+\State $r \gets (t-w)..(t+w)$ \Comment{Ventana combinada}
+\State $Z[t] \gets c(y_r) - [c(y_p) + c(y_q)]$ \Comment{Discrepancia}
+\EndFor
+\State $L \gets \text{PKSearch}(Z)$ \Comment{Detección de picos}
+\State \Return $L$
+\end{algorithmic}
+\end{algorithm}
+
 
 
 
