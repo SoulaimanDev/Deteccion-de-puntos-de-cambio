@@ -214,9 +214,10 @@ donde:
 - $`\Phi: \mathbb{R}^d \rightarrow \mathcal{H}`$ es el mapeo al espacio de características
 - $`\bar{\mu}_{a..b} = \frac{1}{b-a}\sum_{t=a}^{b-1} \Phi(y_t)`$ es la media empírica en $`\mathcal{H}`$
 - El kernel coseno se define como:
-    ```math
-    k(x,y) = \frac{\langle x, y \rangle}{\|x\|_2 \|y\|_2} \in [-1,1]
-   ```
+
+```math
+k(x,y) = \frac{\langle x, y \rangle}{\|x\|_2 \|y\|_2} \in [-1,1]
+```
 
 
 donde $`\langle \cdot \mid \cdot \rangle$ y $\|\cdot\|`$ corresponden al producto escalar y la norma euclidiana respectivamente. Dicho de otro modo, equivale al producto punto normalizado en norma L2 de los vectores.
