@@ -25,12 +25,10 @@
    - [Segmentación PELT](#segmentación-pelt)
    - [Segmentación Bottom-Up](#segmentación-bottom-up)
    - [Detección Window-Based](#detección-window-based)
- 6.[Aplicación de Métodos](#Aplicación-de-Métodos)  
+6. [Aplicacion de Metodos](#aplicacion-de-metodos)  
    - [varianza_constante](#varianza_constante)
    - [varianza_variable](#varianza_variable)
-
-
-
+   
 ---
 ### Introducción
 
