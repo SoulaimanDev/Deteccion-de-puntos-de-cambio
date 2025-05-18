@@ -16,16 +16,16 @@
    - [Cambio de media con kernel (CostRbf)](#cambio-de-media-con-kernel-costrbf)
    - [Cambio de media con kernel (CostCosine)](#cambio-de-media-con-kernel-costcosine)
    - [Cambio en modelo lineal (CostLinear)](#cambio-en-modelo-lineal-costlinear)
-   - [Cambio lineal continuo (CostCLinear)](#cambio-lineal-continuo-costclinearcosto)
+   - [Cambio lineal continuo (CostCLinear)](#cambio-lineal-continuo-CostCLinear)
    - [Función de costo basada en rangos (CostRank)](#función-de-costo-basada-en-rangos-costrank)
    - [Detección de cambios con métrica Mahalanobis (CostMl)](#detección-de-cambios-con-métrica-mahalanobis-costml)
    - [Cambio de modelo autorregresivo (CostAR)](#cambio-de-modelo-autorregresivo-costar)
 5. [Métodos de búsqueda de puntos de cambio](#métodos-de-búsqueda-de-puntos-de-cambio)
    - [Segmentación Binaria (BinSeg)](#segmentación-binaria-binseg)
-   - [Segmentación PELT](#segmentación-pelt)
+   - [PELT (Pruned Exact Linear Time)](#PELT-Pruned-Exact-Linear-Time)
    - [Segmentación Bottom-Up](#segmentación-bottom-up)
    - [Detección Window-Based](#detección-window-based)
-6. [Aplicacion de Metodos](#aplicacion-de-metodos)  
+6. [Aplicación de métodos](#aplicación-de-métodos)  
    - [varianza_constante](#varianza_constante)
    - [varianza_variable](#varianza_variable)
    
@@ -155,7 +155,7 @@ Este valor se encuentra normalizado en el intervalo entre 0 (cuando no existe ni
 
 Esta sección presenta el primer elemento definitorio de los métodos de detección de cambios, que son las funciones de costo. En la mayoría de los casos, estas funciones se derivan a partir de un modelo de señal. A continuación, se agrupa los modelos y sus funciones de costo asociadas en dos categorías: paramétricas y no paramétricas.
 
-### Función de Costo L1
+#### Función de Costo L1
 
 Esta función de costo detecta cambios en la mediana de una señal. En general, es un estimador robusto para detectar desplazamientos en el punto central (ya sea media, mediana o moda) de una distribución .
 Formalmente, dado un segmento de señal $`\{y_t\}_{t \in I}`$ donde $I$ representa el intervalo de análisis, el costo se calcula como:
@@ -184,7 +184,7 @@ c(y_I) = |I| \cdot \log \det(\widehat{\Sigma}_I + \epsilon I_d)
 
 donde:
 ```math
- `\widehat{\Sigma}_I = \frac{1}{|I|-1} \sum_{t \in I} (y_t - \bar{y}_I)(y_t - \bar{y}_I)^\top`
+ \widehat{\Sigma}_I = \frac{1}{|I|-1} \sum_{t \in I} (y_t - \bar{y}_I)(y_t - \bar{y}_I)^\top
 ```
 es la matriz de covarianza muestral del segmento.
   - $`\bar{y}_I`$ es la media empírica del segmento.
@@ -290,7 +290,7 @@ donde:
 - $`\bar{r}_{a..b} = \frac{1}{b-a}\sum_{t=a+1}^b r_t`$ es la media de rangos en el segmento
 - $`\widehat{\Sigma}_r`$ es la matriz de covarianza estimada de los rangos completos
 
-#### Detección de cambios con una métrica de tipo Mahalanobis (CostMl)
+#### Detección de cambios con métrica Mahalanobis (CostMl)
 
 Dada una matriz semidefinida positiva $`M \in \mathbb{R}^{d \times d}`$, definimos la pseudométrica:
 
@@ -379,7 +379,7 @@ donde $`c(\cdot)`$ representa típicamente el error cuadrático medio. A pesar d
 El algoritmo termina cuando se alcanza un número máximo de cambios o cuando la máxima ganancia $G[i]$ está por debajo de un umbral predefinido. Esta aproximación balancea eficiencia computacional con capacidad de detección, siendo particularmente útil cuando el número de segmentos es desconocido a priori.
 
 
-#### Segmentación PELT (Pruned Exact Linear Time)
+#### PELT (Pruned Exact Linear Time)
 El método PELT es un algoritmo de detección exacta de puntos de cambio que combina optimalidad global con eficiencia computacional mediante técnicas de poda dinámica. A diferencia de métodos aproximados como BinSeg, PELT garantiza encontrar la partición óptima de la serie temporal minimizando:
 
 ```math
@@ -506,9 +506,9 @@ Los picos en esta curva indican potenciales puntos de cambio, detectados mediant
 
 ### Aplicación de Métodos
 
-El proyecto se organiza en dos carpetas principales dentro de `notebooks/`:
+Esta sección se organiza en dos carpetas principales dentro de `notebooks/`:
 
-#### 📁 `varianza_constante/`  
+#### varianza_constante  
 Contiene los notebooks que trabajan con una serie temporal de **varianza constante**:
 
 - `Generacion_varianza_constante.ipynb` → Generación de la serie.
@@ -521,7 +521,7 @@ Contiene los notebooks que trabajan con una serie temporal de **varianza constan
 
 ---
 
-#### 📁 `varianza_variable/`  
+#### varianza_variable  
 Contiene los notebooks que trabajan con una serie temporal de **varianza variable**, donde los puntos de cambio son más difíciles de identificar:
 
 - `Generacion_varianza_variable.ipynb` → Generación de la serie.
