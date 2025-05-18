@@ -40,7 +40,7 @@ Hay varias herramientas y programas que puedes usar para detectar puntos de camb
 
 ---
 
-[Retour au menu](#Menú-de-navegación)
+[volver al menú](#Menú-de-navegación)
 
 ---
 
@@ -56,11 +56,11 @@ El método PELT (Pruned Exact Linear Time) es una técnica bastante eficiente pa
 
 ---
 
-[Retour au menu](#Menú-de-navegación)
+[volver al menú](#Menú-de-navegación)
 
 ---
 
-#### Evaluación de Métodos
+#### Métricas de evaluación
 
 
 Los métodos para detectar puntos de cambio se pueden evaluar de dos formas: una es demostrando ciertas propiedades matemáticas de los algoritmos y la otra es hacerlo de forma empírica, calculando distintas métricas.
@@ -147,7 +147,7 @@ Este valor se encuentra normalizado en el intervalo entre 0 (cuando no existe ni
 
 ---
 
-[Retour au menu](#Menú-de-navegación)
+[volver al menú](#Menú-de-navegación)
 
 ---
 
@@ -329,7 +329,7 @@ c(y_I) = \min_{\delta \in \mathbb{R}^p} \sum_{t \in I} (y_t - \delta' z_t)^2
 con $`z_t = [y_{t-1}, \ldots, y_{t-p}]'`$.
 ---
 
-[Retour au menu](#Menú-de-navegación)
+[volver al menú](#Menú-de-navegación)
 
 ---
 ### Métodos de búsqueda de puntos de cambio
@@ -500,7 +500,7 @@ Los picos en esta curva indican potenciales puntos de cambio, detectados mediant
 
 ---
 
-[Retour au menu](#Menú-de-navegación)
+[volver al menú](#Menú-de-navegación)
 
 ---
 
