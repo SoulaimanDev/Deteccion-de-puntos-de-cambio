@@ -5,9 +5,9 @@
 ## Menú de navegación
 1. [Introducción](#introducción)
 2. [Estado del arte](#estado-del-arte)
-3. [Evaluación de Métodos](#evaluación-de-Métodos)
+3. [Métricas de evaluación](#métricas-de-evaluación)
    - [F1-Score](#f1-score)
-   - [Distancia de Hausdorff](#distancia-de-hausdorff)
+   - [Métrica de Hausdorff](#métrica-de-Hausdorff)
    - [Índice de Rand](#índice-de-rand)
 4. [Funciones de costo](#funciones-de-costo)
    - [Función de Costo L1](#función-de-costo-l1)
@@ -60,7 +60,7 @@ El método PELT (Pruned Exact Linear Time) es una técnica bastante eficiente pa
 
 ---
 
-#### Evaluación
+#### Evaluación de Métodos
 
 
 Los métodos para detectar puntos de cambio se pueden evaluar de dos formas: una es demostrando ciertas propiedades matemáticas de los algoritmos y la otra es hacerlo de forma empírica, calculando distintas métricas.
@@ -92,7 +92,7 @@ La métrica F1-Score emerge como indicador robusto para evaluar el rendimiento e
 ```
 
 El mejor valor posible para esta métrica es 1, indicando una detección perfecta, mientras que su peor valor es 0.
-#### Hausdorff
+#### Métrica de Hausdorff
 
 Desde un punto de vista formal, esta métrica corresponde a la mayor distancia temporal entre un punto de cambio y su correspondiente estimación:
 
@@ -114,7 +114,7 @@ donde:
 
 Este valor representa el peor error cometido por el algoritmo que genera el conjunto de puntos estimados $`\widehat{\mathcal{T}}`$, y se expresa en número de muestras. Cuando su valor es cero, significa que ambos conjuntos de puntos de cambio coinciden exactamente. Por el contrario, cuanto mayor sea su valor, mayor será la distancia existente entre algún punto de cambio verdadero en $`\mathcal{T}^{*}`$ y el punto estimado más cercano en $`\widehat{\mathcal{T}}`$, o viceversa.
 
-\subsection{ Índice de Rand}
+#### Índice de Rand
 
 La métrica fundamental Índice de Rand  cuantifica la precisión en la detección de puntos de cambio. Esta medida estadística compara la similitud entre la segmentación obtenida $`\widehat{\mathcal{T}}`$ y la segmentación de referencia $`\mathcal{T}^{*}`$, proporcionando una evaluación global del rendimiento del algoritmo.
 
@@ -144,11 +144,13 @@ RI(\mathcal{T}^{*},\widehat{\mathcal{T}}) := \frac{|\text{SameSeg}(\widehat{\mat
 ```
 
 Este valor se encuentra normalizado en el intervalo entre 0 (cuando no existe ningún acuerdo entre las segmentaciones) y 1 (cuando las segmentaciones son idénticas). 
+
 ---
 
 [Retour au menu](#Menú-de-navegación)
 
 ---
+
 ### funciones de costo
 
 Esta sección presenta el primer elemento definitorio de los métodos de detección de cambios, que son las funciones de costo. En la mayoría de los casos, estas funciones se derivan a partir de un modelo de señal. A continuación, se agrupa los modelos y sus funciones de costo asociadas en dos categorías: paramétricas y no paramétricas.
