@@ -28,7 +28,7 @@
 6. [Aplicación de métodos](#aplicación-de-métodos)  
    - [varianza_constante](#varianza_constante)
    - [varianza_variable](#varianza_variable)
-   
+6. [Prueba con datasets](#Prueba_con_datasets) 
 ---
 ### Introducción
 
@@ -532,3 +532,14 @@ Contiene los notebooks que trabajan con una serie temporal de **varianza variabl
 - `Deteccion_BottomUp.ipynb` → Aplicación del método **Bottom-Up**.
 
 ---
+
+
+---
+
+[volver al menú](#Menú-de-navegación)
+
+---
+
+### Prueba con datasets
+
+Para la validación y prueba de los métodos de detección de puntos de cambio implementados, se utilizó el Human Activity Segmentation Challenge Dataset (HASCD). Este conjunto de datos contiene 250 series temporales multivariadas anotadas, que registran 10,7 horas de datos de movimiento humano en entornos reales mediante sensores de teléfonos inteligentes, recolectados de 15 estudiantes de informática. Las grabaciones capturan 6 secuencias distintas de actividad humana, representativas de comportamientos cotidianos en entornos tanto interiores como exteriores. Cada serie temporal es de doce dimensiones, con duraciones que varían entre 7 segundos y 14 minutos (mediana de 100 segundos) y contienen entre 1 y 15 segmentos de actividad, siendo el 76% de las series de 5 segmentos o menos. Este conjunto de datos se considera un benchmark de referencia para evaluar flujos de trabajo de aprendizaje automático en tareas de segmentación y detección de cambios en series temporales multivariadas. Con el objetivo de aplicar y evaluar los métodos implementados, he creado dentro de notebook un archivo Prueba_dataset. 
