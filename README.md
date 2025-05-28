@@ -28,7 +28,7 @@
 6. [Aplicación de métodos](#aplicación-de-métodos)  
    - [varianza_constante](#varianza_constante)
    - [varianza_variable](#varianza_variable)
-7. [Prueba con datasets](#prueba_con_datasets) 
+7. [Prueba con datasets](#prueba-con-datasets) 
 ---
 ### Introducción
 
